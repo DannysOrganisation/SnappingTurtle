@@ -115,38 +115,60 @@ void Turtlebot3Drive::update_callback()
   double check_side_dist = 0.6;
 
   switch (turtlebot3_state_num) {
+
+    // state of getting direction 
     case GET_TB3_DIRECTION:
+
+      // check that there is not an object in front of the bot
       if (scan_data_[CENTER] > check_forward_dist) {
+
+        // if there is a wall too close to the left then turn rigth
         if (scan_data_[LEFT] < check_side_dist) {
           prev_robot_pose_ = robot_pose_;
           turtlebot3_state_num = TB3_RIGHT_TURN;
-        } else if (scan_data_[RIGHT] < check_side_dist) {
+        }
+        // if there is a wall too close to the right then turn left
+        else if (scan_data_[RIGHT] < check_side_dist) {
           prev_robot_pose_ = robot_pose_;
           turtlebot3_state_num = TB3_LEFT_TURN;
-        } else {
+        }
+        // if we are not close to any walls then keep driving forward
+        else {
           turtlebot3_state_num = TB3_DRIVE_FORWARD;
         }
       }
 
+      // if there is something in front of the robot then turn right
       if (scan_data_[CENTER] < check_forward_dist) {
         prev_robot_pose_ = robot_pose_;
         turtlebot3_state_num = TB3_RIGHT_TURN;
       }
       break;
 
+    // driving forward state
     case TB3_DRIVE_FORWARD:
+
+      // update the linear velocity for the robot. Keep the angular velocity 0
       update_cmd_vel(LINEAR_VELOCITY, 0.0);
+
+      // go back to getting sensor information
       turtlebot3_state_num = GET_TB3_DIRECTION;
       break;
 
+    // state for turning right
     case TB3_RIGHT_TURN:
+
+      // determine if the current angular pose will no longer face the wall
       if (fabs(prev_robot_pose_ - robot_pose_) >= escape_range) {
         turtlebot3_state_num = GET_TB3_DIRECTION;
-      } else {
+      }
+      // if the current pose won't face the wall then rotate the turtlebot
+      else {
         update_cmd_vel(0.0, -1 * ANGULAR_VELOCITY);
       }
       break;
 
+    // left turn same as right turn but in opposite direction
     case TB3_LEFT_TURN:
       if (fabs(prev_robot_pose_ - robot_pose_) >= escape_range) {
         turtlebot3_state_num = GET_TB3_DIRECTION;
@@ -155,6 +177,7 @@ void Turtlebot3Drive::update_callback()
       }
       break;
 
+    // default state gets the direction
     default:
       turtlebot3_state_num = GET_TB3_DIRECTION;
       break;
