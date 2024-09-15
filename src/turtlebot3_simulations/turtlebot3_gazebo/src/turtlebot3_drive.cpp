@@ -119,8 +119,8 @@ void Turtlebot3Drive::update_callback()
   double escape_range = 2 * DEG2RAD;
   double escape_90 = 90 * DEG2RAD;
   double check_forward_dist = 0.4;
-  double check_side_dist = 0.15;
-  double no_wall_dist = 0.45;
+  double check_side_dist = 0.4;
+  double no_wall_dist = 0.57;
 
   switch (turtlebot3_state_num) {
 
@@ -150,7 +150,7 @@ void Turtlebot3Drive::update_callback()
           turtlebot3_state_num = TB3_LEFT_TURN;
         }
         // //if the wall on the left suddenly drops away
-        else if (scan_data_[HARD_LEFT] > (no_wall_dist) && prev_scan_data_[HARD_LEFT] <= 2 * check_side_dist){
+        else if (scan_data_[HARD_LEFT] > (no_wall_dist) && prev_scan_data_[HARD_LEFT] <= no_wall_dist){
           prev_robot_pose_ = robot_pose_;
           prev_scan_data_ = scan_data_;
           turtlebot3_state_num = TB3_LEFT_90;
