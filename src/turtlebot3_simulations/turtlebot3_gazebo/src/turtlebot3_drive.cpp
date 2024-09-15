@@ -26,9 +26,13 @@ Turtlebot3Drive::Turtlebot3Drive()
   /************************************************************
   ** Initialise variables
   ************************************************************/
+  scan_data_.resize(4);
   scan_data_[0] = 0.0;
   scan_data_[1] = 0.0;
   scan_data_[2] = 0.0;
+  scan_data_[3] = 0.0;
+
+  prev_scan_data_ = scan_data_;
 
   robot_pose_ = 0.0;
   prev_robot_pose_ = 0.0;
@@ -84,12 +88,14 @@ void Turtlebot3Drive::odom_callback(const nav_msgs::msg::Odometry::SharedPtr msg
 
 void Turtlebot3Drive::scan_callback(const sensor_msgs::msg::LaserScan::SharedPtr msg)
 {
-  uint16_t scan_angle[3] = {0, 30, 330};
+  // uint16_t scan_angle[9] = {0, 15, 345, 75, 90, 105, 285, 270, 255};
+  uint16_t scan_angle[4] = {0, 30, 330, 90};
 
-  for (int num = 0; num < 3; num++) {
+  for (int num = 0; num < 4; num++) {
     if (std::isinf(msg->ranges.at(scan_angle[num]))) {
       scan_data_[num] = msg->range_max;
     } else {
+      // double ave = (msg->ranges.at(scan_angle[3*num]) + (msg->ranges.at(scan_angle[3*num + 1])) + (msg->ranges.at(scan_angle[3*num + 2]))) / 3;
       scan_data_[num] = msg->ranges.at(scan_angle[num]);
     }
   }
@@ -110,9 +116,11 @@ void Turtlebot3Drive::update_cmd_vel(double linear, double angular)
 void Turtlebot3Drive::update_callback()
 {
   static uint8_t turtlebot3_state_num = 0;
-  double escape_range = 30.0 * DEG2RAD;
-  double check_forward_dist = 0.7;
-  double check_side_dist = 0.6;
+  double escape_range = 2 * DEG2RAD;
+  double escape_90 = 90 * DEG2RAD;
+  double check_forward_dist = 0.4;
+  double check_side_dist = 0.15;
+  double no_wall_dist = 0.45;
 
   switch (turtlebot3_state_num) {
 
@@ -122,24 +130,41 @@ void Turtlebot3Drive::update_callback()
       // check that there is not an object in front of the bot
       if (scan_data_[CENTER] > check_forward_dist) {
 
-        // if there is a wall too close to the left then turn rigth
+        // if there is a wall too close to the left then turn right
         if (scan_data_[LEFT] < check_side_dist) {
           prev_robot_pose_ = robot_pose_;
+          prev_scan_data_ = scan_data_;
           turtlebot3_state_num = TB3_RIGHT_TURN;
         }
         // if there is a wall too close to the right then turn left
         else if (scan_data_[RIGHT] < check_side_dist) {
           prev_robot_pose_ = robot_pose_;
+          prev_scan_data_ = scan_data_;
           turtlebot3_state_num = TB3_LEFT_TURN;
+        }
+
+        // //if the wall on the left is getting too further away, turn towards it
+        else if (scan_data_[LEFT] > prev_scan_data_[LEFT] && scan_data_[LEFT] >  (1.3 * check_side_dist) && (scan_data_[LEFT] < 2* check_side_dist)){//} || prev_scan_data_[LEFT] < 1.4 * check_side_dist)){
+          prev_robot_pose_ = robot_pose_;
+          prev_scan_data_ = scan_data_;
+          turtlebot3_state_num = TB3_LEFT_TURN;
+        }
+        // //if the wall on the left suddenly drops away
+        else if (scan_data_[HARD_LEFT] > (no_wall_dist) && prev_scan_data_[HARD_LEFT] <= 2 * check_side_dist){
+          prev_robot_pose_ = robot_pose_;
+          prev_scan_data_ = scan_data_;
+          turtlebot3_state_num = TB3_LEFT_90;
         }
         // if we are not close to any walls then keep driving forward
         else {
+          prev_scan_data_ = scan_data_;
           turtlebot3_state_num = TB3_DRIVE_FORWARD;
         }
       }
 
       // if there is something in front of the robot then turn right
       if (scan_data_[CENTER] < check_forward_dist) {
+        prev_scan_data_ = scan_data_;
         prev_robot_pose_ = robot_pose_;
         turtlebot3_state_num = TB3_RIGHT_TURN;
       }
@@ -158,7 +183,7 @@ void Turtlebot3Drive::update_callback()
     // state for turning right
     case TB3_RIGHT_TURN:
 
-      // determine if the current angular pose will no longer face the wall
+      // determine if the robot has turned the full amount
       if (fabs(prev_robot_pose_ - robot_pose_) >= escape_range) {
         turtlebot3_state_num = GET_TB3_DIRECTION;
       }
@@ -174,6 +199,14 @@ void Turtlebot3Drive::update_callback()
         turtlebot3_state_num = GET_TB3_DIRECTION;
       } else {
         update_cmd_vel(0.0, ANGULAR_VELOCITY);
+      }
+      break;
+
+    case TB3_LEFT_90:
+      if (fabs(prev_robot_pose_ - robot_pose_) >= escape_90) {
+        turtlebot3_state_num = GET_TB3_DIRECTION;
+      } else {
+        update_cmd_vel(0.1*LINEAR_VELOCITY, ANGULAR_VELOCITY);
       }
       break;
 
