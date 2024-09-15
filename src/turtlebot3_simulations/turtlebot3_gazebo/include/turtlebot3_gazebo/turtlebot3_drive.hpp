@@ -42,6 +42,7 @@
 #define TB3_RIGHT_TURN    2
 #define TB3_LEFT_TURN     3
 #define TB3_LEFT_90       4
+#define TB3_SLOW_FORWARD  5
 
 class Turtlebot3Drive : public rclcpp::Node
 {

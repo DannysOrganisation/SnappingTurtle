@@ -142,18 +142,24 @@ void Turtlebot3Drive::update_callback()
           prev_scan_data_ = scan_data_;
           turtlebot3_state_num = TB3_LEFT_TURN;
         }
-
-        // //if the wall on the left is getting too further away, turn towards it
+        //if the wall on the left suddenly drops away
+        else if (scan_data_[HARD_LEFT] > (no_wall_dist) && prev_scan_data_[HARD_LEFT] <= no_wall_dist){
+          prev_robot_pose_ = robot_pose_;
+          prev_scan_data_ = scan_data_;
+          turtlebot3_state_num = TB3_LEFT_90;
+        }
+        // if the wall on the left is getting too further away, turn towards it
         else if (scan_data_[LEFT] > prev_scan_data_[LEFT] && scan_data_[LEFT] >  (1.3 * check_side_dist) && (scan_data_[LEFT] < 2* check_side_dist)){//} || prev_scan_data_[LEFT] < 1.4 * check_side_dist)){
           prev_robot_pose_ = robot_pose_;
           prev_scan_data_ = scan_data_;
           turtlebot3_state_num = TB3_LEFT_TURN;
         }
-        // //if the wall on the left suddenly drops away
-        else if (scan_data_[HARD_LEFT] > (no_wall_dist) && prev_scan_data_[HARD_LEFT] <= no_wall_dist){
+        
+        //if a eft hand corner is approaching
+        else if (scan_data_[LEFT] > 1.5 * check_side_dist && prev_scan_data_[LEFT] > 1.5 * check_side_dist){
           prev_robot_pose_ = robot_pose_;
           prev_scan_data_ = scan_data_;
-          turtlebot3_state_num = TB3_LEFT_90;
+          turtlebot3_state_num = TB3_SLOW_FORWARD;
         }
         // if we are not close to any walls then keep driving forward
         else {
@@ -208,6 +214,15 @@ void Turtlebot3Drive::update_callback()
       } else {
         update_cmd_vel(0.1*LINEAR_VELOCITY, ANGULAR_VELOCITY);
       }
+      break;
+
+    case TB3_SLOW_FORWARD:
+
+      // reduce speed
+      update_cmd_vel(0.5 * LINEAR_VELOCITY, 0.0);
+
+      // go back to getting sensor information
+      turtlebot3_state_num = GET_TB3_DIRECTION;
       break;
 
     // default state gets the direction
