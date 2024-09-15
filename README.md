@@ -4,10 +4,6 @@ cd ~/SnappingTurtle && colcon build --symlink-install
 
 
 
-
-
-
-
 # James Hocking Notes
 ## Setting up the world
 Must have a launch file which calls the world to launch. The worlds
@@ -34,9 +30,11 @@ colcon build --symlink-install
 Colcon is short for collective construct, and ensures that all packages have been built correctly.
 Then type the following command 
 ```bash
+source install/setup.bash
 . /usr/share/gazebo/setup.sh
 ros2 launch turtlebot3_gazebo <launchfile_name>.launch.py
 ```
+As a one liner `colcon build --symlink-install && source install/setup.bash && . /usr/share/gazebo/setup.sh && ros2 launch turtlebot3_gazebo snappingturtle.launch.py`
 The first line, as implied by the filename makes sure that gazebo is setup correctly. The second line uses the launchfile to 
 run the code.
 
