@@ -14,4 +14,10 @@ CENTER LEFT RIGHT HARD_RIGHT
 Check ENUM for more details
 */
 
+#ifndef LIDAR_HPP
+#define LIDAR_HPP
+
 #include "enum.h"
+
+
+#endif
