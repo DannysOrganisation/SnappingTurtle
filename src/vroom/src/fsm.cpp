@@ -54,6 +54,7 @@ void FSM::update_state()
    {
 
         case LOCATE_WALL:
+<<<<<<< HEAD
             /*
             STILL HAVE TO DO THIS
             */
@@ -63,10 +64,14 @@ void FSM::update_state()
             /*
             STILL HAVE TO IMPLEMENT THIS
             */
+=======
+            
+>>>>>>> feebf3e (update: transferred over the main scaffold of turtlebot3_drive.cpp)
             break;
 
         case GET_TB3_DIRECTION:
 
+<<<<<<< HEAD
             // extract the lidar data
             scan_data_ = lidar_node_.get_scan_data();
     
@@ -116,6 +121,10 @@ void FSM::update_state()
                 turtlebot3_state_num = TB3_RIGHT_TURN;
             }
 
+=======
+            //TODO ADD IN THIS BASED ON WHATEVER ADAM ENDS UP DOING WITH THE LIDAR
+            scan_reference;
+>>>>>>> feebf3e (update: transferred over the main scaffold of turtlebot3_drive.cpp)
             break;
         
         case TB3_DRIVE_FOWARD:
