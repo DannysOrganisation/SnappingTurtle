@@ -18,6 +18,7 @@ This should publish to:
 #include "lidar.hpp"
 #include "odom.hpp" 
 #include "cam.hpp"
+#include "enum.h"
 #include "std_msgs/msg/int32.hpp"
 #include <rclcpp/rclcpp.hpp>
 #include <chrono>
@@ -51,6 +52,12 @@ class FSM : public rclcpp::Node
         std::shared_ptr<Lidar> lidar_node_;
         std::shared_ptr<Odom> odom_node_;
         std::shared_ptr<Cam> cam_node_;
-        
-        
+
+
+        // wall finding member variables
+        double min_distance;
+        double min_distance_pose;
+
+        // track poses that need to be remembe
+        double prev_robot_pose_;
 }
