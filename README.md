@@ -38,6 +38,12 @@ As a one liner `colcon build --symlink-install && source install/setup.bash && .
 The first line, as implied by the filename makes sure that gazebo is setup correctly. The second line uses the launchfile to 
 run the code.
 
+# Solve the maze
+Once the world is created and the robot initiated, to run the maze solver run
+```
+ros2 run turtlebot3_gazebo turtlebot3_drive
+```
+
 ## Visualise the robot
 Rviz is a seperate program that we can use that interacts with the ROS nodes which helps us visualise 
 the robots perception of the world around it.

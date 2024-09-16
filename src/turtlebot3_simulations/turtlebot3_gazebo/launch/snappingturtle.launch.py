@@ -22,16 +22,17 @@ def generate_launch_description():
 
     # Path to your turtlebot model SDF file
     turtlebot_model_file = os.path.join(get_package_share_directory('turtlebot3_gazebo'),
-                                         'models', 'turtlebot3_waffle', 'model.sdf')
+                                         'models', 'turtlebot3_burger', 'model.sdf')
     
     # make it easy to try different maps
     dict_of_options = {"1":"TestMaze1"}
-    maze_num = input(f"What Practice Maze number do you want to try? (Options: {', '.join(list(dict_of_options.keys()))})")
+    maze_num = input(f"What Practice Maze number do you want to try? (Options: {', '.join(list(dict_of_options.keys()))}): ")
     if maze_num in list(dict_of_options.keys()):
         maze_name = dict_of_options[maze_num]
     else:
         print(f"{maze_num} not an option!. Sorry.")
         exit()
+        
     # Path to your walls model SDF file
     maze_model_file = os.path.join(get_package_share_directory('turtlebot3_gazebo'),
                                     'worlds', maze_name, 'model.sdf')
