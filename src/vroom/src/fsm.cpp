@@ -21,10 +21,6 @@ FSM::FSM(): Node("fsm_node"), current_state_(GET_TB3_DIRECTION)
     // create the timer that will cotrol how often the state gets published
     update_timer_ = this->create_wall_timer(
             10ms, std::bind(&FSM::update_state, this));
-<<<<<<< HEAD
-
-=======
->>>>>>> 33704ec (feat: created version 1 of the fsm class)
 }
 
 FSM::~FSM()
@@ -53,7 +49,6 @@ void FSM::update_state()
     WORK OUT THE NEXT STATE LOGIC AND PROCESS IT HERE
     */
 
-<<<<<<< HEAD
    switch (current_state_)
    {
 
@@ -162,8 +157,48 @@ void FSM::update_state()
             break;
    }
 
-}
-=======
-}
 
->>>>>>> 33704ec (feat: created version 1 of the fsm class)
+   switch (current_state_)
+   {
+
+        case LOCATE_WALL:
+            
+            break;
+
+        case GET_TB3_DIRECTION:
+
+            //TODO ADD IN THIS BASED ON WHATEVER ADAM ENDS UP DOING WITH THE LIDAR
+            scan_reference;
+            break;
+        
+        case TB3_DRIVE_FOWARD:
+
+            // the velocity should be set in the output and then 
+            // go back to watching for incoming objects
+            current_state_ = GET_TB3_DIRECTION;
+            break;
+        
+        case TB3_RIGHT_TURN:
+            
+            // stay in rotate state until we get to a better position
+            if fabs(prev_robot_pose_ - odom.get_robot_pose()) >= escape_range
+                current_state_ = GET_TB3_DIRECTION;
+            break;
+        
+        case TB3_LEFT_TURN:
+            // stay in rotate state until we get to a better position
+            if fabs(prev_robot_pose_ - odom.get_robot_pose()) >= escape_range
+                current_state_ = GET_TB3_DIRECTION;
+            break;
+        
+        case TB3_LEFT_90:
+             if (fabs(prev_robot_pose_ - robot_pose_) >= escape_90)
+                current_state_ = GET_TB3_DIRECTION;
+            break;
+        
+        case TB3_SLOW_FORWARD:
+            // go straight to analysing direction after publishing the slow forward
+            current_state_ = GET_TB3_DIRECTION;
+            break;
+   }
+}
