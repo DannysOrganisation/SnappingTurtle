@@ -14,3 +14,43 @@ This should publish to:
 */
 
 #include "enum.h"
+
+#include "lidar.hpp"
+#include "odom.hpp" 
+#include "cam.hpp"
+#include "std_msgs/msg/int32.hpp"
+#include <rclcpp/rclcpp.hpp>
+#include <chrono>
+
+using namespace std::chrono_literals;
+
+class FSM : public rclcpp::Node
+{
+
+    public:
+        FSM();
+        ~FSM();
+
+    
+    private:
+        // ROS topic publishers
+        rclcpp::Publisher<std_msgs::msg::Int32>::SharedPtr state_pub_;
+
+        // timer to control how often state gets published
+        rclcpp::TimerBase::SharedPtr update_timer_;
+
+        // the current state of the system
+        int current_state_;
+
+        // function to publish the actual state
+        void update_state() const;
+
+        // Nodes that control reading from the data itself
+
+        // Instances of the child nodes
+        std::shared_ptr<Lidar> lidar_node_;
+        std::shared_ptr<Odom> odom_node_;
+        std::shared_ptr<Cam> cam_node_;
+        
+        
+}
