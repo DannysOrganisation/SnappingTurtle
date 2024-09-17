@@ -86,3 +86,13 @@ if lidar[CENTER] > crash_distance:
         DRIVE_FORWARD
 else:
     TURN_RIGHT
+
+TODO: Daniel
+- make left wall follow function which can determine what action to do next
+- make right wall follow function which can determine what to do next
+- publish "what to do" to a topic
+
+TODO: Adam
+- Subscribe to topic
+- act set cmd_vel appropriately for each state
+- write a function for each thing to do e.g. TURN_HARD_LEFT, DRIVE_FORWARD etc.
