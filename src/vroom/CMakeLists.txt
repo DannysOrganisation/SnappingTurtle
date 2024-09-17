@@ -37,9 +37,8 @@ include_directories(include)
 add_executable(mantis ${source_})
 ament_target_dependencies(mantis ${dependencies})
 
-
 install(TARGETS
-  lidar
+  mantis
   DESTINATION lib/${PROJECT_NAME})
 
 if(BUILD_TESTING)
