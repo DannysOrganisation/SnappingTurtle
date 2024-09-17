@@ -43,10 +43,16 @@ void Odom::odom_callback(const nav_msgs::msg::Odometry::SharedPtr msg)
     msg->pose.pose.orientation.y,
     msg->pose.pose.orientation.z,
     msg->pose.pose.orientation.w);
+
+  // do the math operation to convert the pose into a 3x3 matrix
+  // for the orientation
   tf2::Matrix3x3 m(q);
+
+  // extract the angles from the data
   double roll, pitch, yaw;
   m.getRPY(roll, pitch, yaw);
 
+  // set the member variable to the yaw (robot should only have rotation in this dimension)
   robot_pose_ = yaw;
 }
 

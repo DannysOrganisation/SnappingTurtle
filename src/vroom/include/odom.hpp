@@ -11,6 +11,8 @@ This should then store this in a member called robot_pose_
 
 #include "enum.h"
 #include <nav_msgs/msg/odometry.hpp>
+#include <tf2/LinearMath/Matrix3x3.h>
+#include <tf2/LinearMath/Quaternion.h>
 #include <rclcpp/rclcpp.hpp>
 
 
