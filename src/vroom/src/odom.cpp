@@ -52,6 +52,9 @@ void Odom::odom_callback(const nav_msgs::msg::Odometry::SharedPtr msg)
   double roll, pitch, yaw;
   m.getRPY(roll, pitch, yaw);
 
+  //  logging statement to establish that this works
+  RCLCPP_INFO(this->get_logger(), "Pose: '%f'", yaw);
+
   // set the member variable to the yaw (robot should only have rotation in this dimension)
   robot_pose_ = yaw;
 }
