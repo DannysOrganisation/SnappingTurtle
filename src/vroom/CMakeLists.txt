@@ -15,7 +15,6 @@ find_package(geometry_msgs REQUIRED)
 find_package(nav_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(tf2 REQUIRED)
-# find_package(vroom REQUIRED)
 
 
 set(dependencies
@@ -24,9 +23,10 @@ set(dependencies
   "rclcpp"
   "sensor_msgs"
   "tf2"
-  # "vroom"
 )
 
+
+# TODO add your .cpp files here
 set(source_
     "src/main.cpp"
     "src/lidar.cpp"
@@ -34,8 +34,8 @@ set(source_
 
 include_directories(include)
 
-add_executable(lidar ${source_})
-ament_target_dependencies(lidar ${dependencies})
+add_executable(mantis ${source_})
+ament_target_dependencies(mantis ${dependencies})
 
 
 install(TARGETS
