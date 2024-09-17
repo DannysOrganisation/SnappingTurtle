@@ -53,7 +53,6 @@ class FSM : public rclcpp::Node
         std::shared_ptr<Odom> odom_node_;
         std::shared_ptr<Cam> cam_node_;
 
-
         // wall finding member variables
         double min_distance;
         double min_distance_pose;

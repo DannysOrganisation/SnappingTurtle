@@ -21,7 +21,10 @@ FSM::FSM(): Node("fsm_node"), current_state_(GET_TB3_DIRECTION)
     // create the timer that will cotrol how often the state gets published
     update_timer_ = this->create_wall_timer(
             10ms, std::bind(&FSM::update_state, this));
+<<<<<<< HEAD
 
+=======
+>>>>>>> 33704ec (feat: created version 1 of the fsm class)
 }
 
 FSM::~FSM()
@@ -50,6 +53,7 @@ void FSM::update_state()
     WORK OUT THE NEXT STATE LOGIC AND PROCESS IT HERE
     */
 
+<<<<<<< HEAD
    switch (current_state_)
    {
 
@@ -159,3 +163,7 @@ void FSM::update_state()
    }
 
 }
+=======
+}
+
+>>>>>>> 33704ec (feat: created version 1 of the fsm class)
