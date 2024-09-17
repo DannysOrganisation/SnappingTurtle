@@ -64,7 +64,7 @@ pose itself.
 
 @return: robot_pose_ (the current yaw)
 */
-double get_robot_pose() const
+double Odom::get_robot_pose() const
 {
     return robot_pose_;
 }
