@@ -61,8 +61,9 @@ void Odom::odom_callback(const nav_msgs::msg::Odometry::SharedPtr msg)
 Getter for the robot pose. 
 Const used such that the getter can't change the robot
 pose itself.
-*/
 
+@return: robot_pose_ (the current yaw)
+*/
 double get_robot_pose() const
 {
     return robot_pose_;
