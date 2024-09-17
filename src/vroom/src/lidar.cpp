@@ -32,7 +32,7 @@ void CLidar::scan_callback(const sensor_msgs::msg::LaserScan::SharedPtr msg){
     //TODO Delete print statement
     RCLCPP_INFO(this->get_logger(), "I received from a topic! Yay!");
 
-    for (int num = 0; num < 4; num++) {
+    for (int num = 0; num < num_angles; num++) {
         if (std::isinf(msg->ranges.at(scan_angle[num]))) {
         scan_data_[num] = msg->range_max;
         } else {
