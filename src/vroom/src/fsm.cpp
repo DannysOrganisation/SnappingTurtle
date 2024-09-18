@@ -16,7 +16,7 @@ FSM::FSM(): Node("fsm_node"), current_state_(0)
     cam_node_ = std::make_shared<Cam>();
 
     // create the state publisher
-    state_pub_ = this->create_publisher<std_msgs::msg::Int32>("/state", 10);
+    state_pub_ = this->create_publisher<std_msgs::msg::Int32>("/state", STANDARD_BUFFER_SIZE);
 
     // create the timer that will cotrol how often the state gets published
     update_timer_ = this->create_wall_timer(
