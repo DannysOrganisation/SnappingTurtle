@@ -25,6 +25,7 @@ This should publish to:
 #include "std_msgs/msg/int32.hpp"
 #include <rclcpp/rclcpp.hpp>
 #include <chrono>
+#include <vector>
 
 using namespace std::chrono_literals;
 
@@ -35,8 +36,15 @@ class FSM : public rclcpp::Node
         FSM();
         ~FSM();
 
-    
     private:
+
+        // Define next state logic constants
+        static constexpr double ESCAPE_RANGE = 2 * DEG2RAD;
+        static constexpr double ESCAPE_90 = 90 * DEG2RAD;
+        static constexpr double CHECK_FORWARD_DIST = 0.4;
+        static constexpr double CHECK_SIDE_DIST = 0.4;
+        static constexpr double NO_WALL_DIST = 0.57;
+
         // ROS topic publishers
         rclcpp::Publisher<std_msgs::msg::Int32>::SharedPtr state_pub_;
 
@@ -60,6 +68,12 @@ class FSM : public rclcpp::Node
         double min_distance;
         double min_distance_pose;
 
-        // track poses that need to be remembe
+        // track data that need to be remembered
         double prev_robot_pose_;
+<<<<<<< HEAD
 }
+=======
+        std::vector<double> scan_data_;
+        std::vector<double> prev_scan_data_;
+}
+>>>>>>> a410d96 (progressed general neutral state logic)
