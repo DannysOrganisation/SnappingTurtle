@@ -30,7 +30,7 @@ set(dependencies
 set(source_
     "src/main.cpp"
     "src/lidar.cpp"
-    "motordrive.cpp"
+    "src/motordrive.cpp"
     )
 
 include_directories(include)
