@@ -13,12 +13,15 @@ This should publish to:
 
 */
 
+// includes for constants
 #include "enum.h"
 
+// includes for children nodes
 #include "lidar.hpp"
 #include "odom.hpp" 
 #include "cam.hpp"
-#include "enum.h"
+
+// includes for ROS stuff
 #include "std_msgs/msg/int32.hpp"
 #include <rclcpp/rclcpp.hpp>
 #include <chrono>
