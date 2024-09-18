@@ -23,7 +23,7 @@ def generate_launch_description():
     use_sim_time = LaunchConfiguration('use_sim_time', default='true')
 
     # Select maze number
-    dict_of_options = {"1": "TestMaze1"}
+    dict_of_options = {"1": "TestMaze1", "testColor":"TestMaze2"}
     maze_num = input(f"What Practice Maze number do you want to try? (Options: {', '.join(list(dict_of_options.keys()))}): ")
     if maze_num in list(dict_of_options.keys()):
         maze_name = dict_of_options[maze_num]
@@ -68,15 +68,15 @@ def generate_launch_description():
     )
 
     # Get the maze position
-    maze_positions = {"1": ["-8.2", "-7.0", "0.0"]}
+    maze_positions = {"1": ["-8.2", "-7.0", "0.0"], "testColor":["0.0", "2.5", "0.0"]}
     curr_maze_pos = maze_positions[maze_num]
 
     # Get the robot position
-    robot_positions = {"1": ["0.0", "0.0", "0.01"]}
+    robot_positions = {"1": ["0.0", "0.0", "0.01"], "testColor":["0.0", "0.0", "0.0"]}
     curr_robot_positions = robot_positions[maze_num]
 
     # Get the robot rotation
-    robot_rotation = {"1": "-1.5708"}
+    robot_rotation = {"1": "-1.5708", "testColor":"0.0"}
     rotation = robot_rotation[maze_num]
 
     # Launch configuration for robot spawn
