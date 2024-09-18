@@ -1,0 +1,88 @@
+angle definitions
+###########################
+CENTER      0
+LEFT        30
+RIGHT       330
+HARD_LEFT   90
+HARD_RIGHT  270
+############################
+#determine which type of maze
+
+#there are closed walls all around therefore it clearly is not open maze
+if lidar_at_spawn[HARD_LEFT] < Lidar_max and lidar_at_spawn[HARD_RIGHT] < lidar_max:
+    maze_type = closed_maze
+    solve_type = left_wall
+
+#there is a wall to the left, but no wall to the right therefor it must be open maze
+#begin with a left wall follow
+else if lidar_at_spawn[HARD_LEFT] < lidar_max and lidar_at_spawn[HARD_RIGHT] == lidar_max:
+    maze_type = open_maze
+    solve_type = left_wall
+
+#there is a wall to the right but no wall to the left therefor it must be open maze
+#begin with a right wall follow
+else if lidar_at_spawn[HARD_LEFT] == lidar_max and lidar_at_spawn[HARD_RIGHT] < lidar_max:
+    maze_type = open maze
+    solve_type = right_wall
+
+#act accordingly to the maze type
+
+#if closed maze, solve maze as left wall follow
+if maze_type = closed_maze
+    solve_type = left_wall
+    #solve type never changes!
+
+#if open maze, swap walls when walls are detected on both sides
+#somehow, don't swap walls back for a little while (maybe a flag or something)
+else if maze_type = open_maze:
+    if solve_type = left_wall and scan_data_right < lidar_max:
+        solve_type = right_wall
+    else if solve_type = right_wall and scan_data_left < lidar_max:
+        solve_type = left_wall
+    else:
+        solve_type = solve_type
+
+FSM should have left_wall_follow(), right_wall_follow() which know the logic appropriate
+to themselves. They then publish whether the robot should turn a little left, a little right,
+hard left, hard right, or continue straight, or slow down, etc.
+
+Therefore, FSM needs to know all control logic for left and right wall follow
+
+####################################################################
+output states:
+##############################
+TURN_LEFT           (3 degrees)
+TURN_RIGHT          (3 degrees)
+TURN_HARD_LEFT      (90 degree arc)
+TURN_HARD_RIGHT     (90 degree arc)
+DRIVE_FORWARD       (normal speed)
+SLOW_FORWARD        (fraction of normal speed)
+##############################
+
+Left wall follow logic:
+
+#check if there is an object directly in front
+if lidar[CENTER] > crash_distance:
+    
+    #if there is a wall too close to the left then turn right
+    if lidar[LEFT] < side_crash:
+        TURN_RIGHT
+    #if there is a wall too close to the right then turn left
+    else if lidar[RIGHT] < crash_distance:
+        TURN_LEFT
+    #if the wall on the left suddenly drops away, turn hard left
+    else if lidar[HARD_LEFT] > no_wall_dist and prev_lidar[HARD_LEFT] <= no_wall_dist:
+        TURN_HARD_LEFT
+    #if the robot starts to drift away from the left hand wall
+    #but only if the robot even HAS a left wall close by!
+    else if prev_lidar[LEFT] > prev_lidar[LEFT]  and 1.3 * side_crash < lidar[LEFT] < 2 * side_crash
+        TURN_LEFT
+    #look ahead and check if a left hand corner is approaching
+    #check if the scan data is consistently far away
+    else if lidar[LEFT] > 1.5 * side_crash and prev_lidar > 1.5 * side_crash:
+        SLOW_FORWARD
+    #no conditions met 
+    else:
+        DRIVE_FORWARD
+else:
+    TURN_RIGHT
