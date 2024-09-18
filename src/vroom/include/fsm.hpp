@@ -14,6 +14,7 @@ This should publish to:
 */
 
 #include "enum.h"
+#include "constants.hpp"
 
 #include "lidar.hpp"
 #include "odom.hpp" 
