@@ -76,7 +76,7 @@ def generate_launch_description():
     curr_robot_positions = robot_positions[maze_num]
 
     # Get the robot rotation
-    robot_rotation = {"1": "-1.5708", "testColor":"0.0"}
+    robot_rotation = {"1": "-1.5708", "testColor":"-3.141"}
     rotation = robot_rotation[maze_num]
 
     # Launch configuration for robot spawn
