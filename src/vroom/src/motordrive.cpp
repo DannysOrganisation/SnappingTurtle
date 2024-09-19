@@ -1,5 +1,4 @@
 #include "motordrive.hpp"
-#include "std_msgs/msg/int32.hpp"
 
 
 Motordrive::Motordrive()
@@ -46,12 +45,18 @@ void Motordrive::state_callback(const std_msgs::msg::Int32 msg){
             turn_right();
             break;
         
-        case TB3_LEFT_90:
+        case TB3_LEFT_TURN_90_DEG:
             turn_hard_left();
             break;
 
-        case TB3_RIGHT_90:
+        case TB3_RIGHT_TURN_90_DEG:
             turn_hard_right();
+            break;
+        
+        //added default state to drive forward... probably not the best option
+        //I think a better option would be to come to a stop? not sure tbh
+        default:
+            drive_forward();
             break;
 
     }
