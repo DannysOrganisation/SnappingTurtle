@@ -1,10 +1,7 @@
-## Once you have cloned this repo:
+# SnappingTurtles 
+This repository holds the code for MTRX3760 Project 1 and is created by the Master 
+Oogway group. It holds code that allows a turtlebot simulation to solve a maze.
 
-cd ~/SnappingTurtle && colcon build --symlink-install
-
-
-
-# James Hocking Notes
 ## Setting up the world
 Must have a launch file which calls the world to launch. The worlds
 are held in the `src/turtlebot3_simulations/turtlebot3_gazebo/worlds` folder.
@@ -37,6 +34,12 @@ ros2 launch turtlebot3_gazebo <launchfile_name>.launch.py
 As a one liner `colcon build --symlink-install && source install/setup.bash && . /usr/share/gazebo/setup.sh && ros2 launch turtlebot3_gazebo snappingturtle.launch.py`
 The first line, as implied by the filename makes sure that gazebo is setup correctly. The second line uses the launchfile to 
 run the code.
+
+# Solve the maze
+Once the world is created and the robot initiated, to run the maze solver run
+```
+colcon build --symlink-install && source install/setup.bash && ros2 run turtlebot3_gazebo turtlebot3_drive
+```
 
 ## Visualise the robot
 Rviz is a seperate program that we can use that interacts with the ROS nodes which helps us visualise 
