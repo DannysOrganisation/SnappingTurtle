@@ -6,7 +6,8 @@ enum Directions {
     CENTER = 0,
     LEFT,
     RIGHT,
-    HARD_LEFT
+    HARD_LEFT,
+    HARD_RIGHT
 };
 
 enum States {

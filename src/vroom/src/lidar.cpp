@@ -16,8 +16,8 @@ CLidar::CLidar()
         );
 
     //resize scan data member variables
-    scan_data_.resize(num_angles);
-    prev_scan_data_.resize(num_angles);   
+    scan_data_.resize(NUM_ANGLES);
+    prev_scan_data_.resize(NUM_ANGLES);   
 }
 
 //--
@@ -32,7 +32,7 @@ void CLidar::scan_callback(const sensor_msgs::msg::LaserScan::SharedPtr msg){
     //TODO Delete print statement
     RCLCPP_INFO(this->get_logger(), "I received from a topic! Yay!");
 
-    for (int num = 0; num < num_angles; num++) {
+    for (int num = 0; num < NUM_ANGLES; num++) {
         if (std::isinf(msg->ranges.at(scan_angle[num]))) {
         scan_data_[num] = msg->range_max;
         } else {
