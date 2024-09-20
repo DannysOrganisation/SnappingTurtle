@@ -82,10 +82,11 @@ double Odom::get_robot_pose() const
     return robot_pose_;
 }
 
-
-int main()
+#ifdef ODOM_MAIN
+int main(int argc, char** argv)
 {
   rclcpp::init(argc, argv);
   rclcpp::spin(std::make_shared<Odom>());
    rclcpp::shutdown();
 }
+#endif

@@ -48,9 +48,12 @@ std::vector<double> Lidar::get_scan_data()
 }
 
 
-int main()
+#ifdef LIDAR_MAIN
+
+int main(int argc, char** argv)
 {
     rclcpp::init(argc, argv);
     rclcpp::spin(std::make_shared<Lidar>());
     rclcpp::shutdown();
 }
+#endif
