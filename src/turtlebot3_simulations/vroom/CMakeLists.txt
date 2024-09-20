@@ -1,9 +1,8 @@
-cmake_minimum_required(VERSION 3.8)
-project(vroom)
+# Specify the minimum version of CMake required
+cmake_minimum_required(VERSION 3.22)
 
-if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  add_compile_options(-Wall -Wextra -Wpedantic)
-endif()
+# Define the project name and version
+project(vroom VERSION 1.0)
 
 # Find dependencies
 find_package(ament_cmake REQUIRED)
@@ -24,15 +23,16 @@ set(dependencies
   "tf2"
 )
 
-# Add your .cpp files here
 set(source_
     "src/main.cpp"
     "src/lidar.cpp"
-    "src/odom.cpp"
     "src/motordrive.cpp"
+    "src/odom.cpp"
+    "src/CameraReader.cpp"
     "src/fsm.cpp"
     )
 
+# Include directories
 include_directories(include)
 
 add_executable(lidar src/lidar.cpp)
@@ -57,14 +57,18 @@ install(TARGETS
   fsm
   DESTINATION lib/${PROJECT_NAME})
 
+# Handle testing and linting
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
+  
+  
   # The following line skips the linter which checks for copyrights
   # Comment the line when a copyright and license is added to all source files
   set(ament_cmake_copyright_FOUND TRUE)
   # The following line skips cpplint (only works in a git repo)
   # Comment the line when this package is in a git repo and when
   # a copyright and license is added to all source files
+  set(ament_cmake_copyright_FOUND TRUE)
   set(ament_cmake_cpplint_FOUND TRUE)
   ament_lint_auto_find_test_dependencies()
 endif()

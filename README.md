@@ -36,9 +36,9 @@ The first line, as implied by the filename makes sure that gazebo is setup corre
 run the code.
 
 # Solve the maze
-Once the world is created and the robot initiated, to run the maze solver run
+Once the world is created and the robot initiated, to run the main do the following:
 ```
-colcon build --symlink-install && source install/setup.bash && ros2 run turtlebot3_gazebo turtlebot3_drive
+colcon build --symlink-install && source install/setup.bash && ros2 run 
 ```
 
 ## Visualise the robot

@@ -1,0 +1,31 @@
+#ifndef ENUM_H
+#define ENUM_H
+
+
+enum Directions {
+    CENTER = 0,
+    LEFT,
+    RIGHT,
+    HARD_LEFT,
+    HARD_RIGHT
+};
+
+enum States {
+ LOCATE_WALL = 0,
+ GET_TB3_DIRECTION,
+ TB3_DRIVE_FORWARD,
+ TB3_RIGHT_TURN,
+ TB3_RIGHT_TURN_90_DEG,
+ TB3_LEFT_TURN,
+ TB3_LEFT_TURN_90_DEG,
+ TB3_SLOW_FORWARD
+};
+
+enum CameraSettingsColors {
+  RED_INDEX_ADJUSTMENT = 0,
+  GREEN_INDEX_ADJUSTMENT,
+  BLUE_INDEX_ADJUSTMENT,  
+  AMOUNT_OF_COLOURS
+}
+
+#endif
