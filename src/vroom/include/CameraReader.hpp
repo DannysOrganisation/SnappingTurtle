@@ -15,10 +15,11 @@ James Hocking, 2024
 
 #include <rclcpp/rclcpp.hpp>
 #include <sensor_msgs/msg/image.hpp>
+#include "std_msgs/msg/float32.hpp"
 #include <iostream>
 
 
-class CameraReader : public rclcpp::Node {     
+class CameraReader : public rclcpp::Node {         
     public:
         // Constructor
         CameraReader();  
@@ -27,9 +28,9 @@ class CameraReader : public rclcpp::Node {
         ~CameraReader();  
 
         // Getters for the color values
-        float get_last_r_density();
-        float get_last_g_density();
-        float get_last_b_density();
+        float get_last_r_density() const;
+        float get_last_g_density() const;
+        float get_last_b_density() const;
         
     private:
         // Variables to store the last density of colors
@@ -42,6 +43,9 @@ class CameraReader : public rclcpp::Node {
 
         // Callback for the camera
         void camera_callback(const sensor_msgs::msg::Image::SharedPtr msg);        
+
+        // Publisher of the green density
+        rclcpp::Publisher<std_msgs::msg::Float32>::SharedPtr state_pub_;
 };
 
 #endif  

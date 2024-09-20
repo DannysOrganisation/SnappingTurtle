@@ -21,6 +21,12 @@ CameraReader::CameraReader() : Node("turtlebot3_camera_reader") {
         std::bind(&CameraReader::camera_callback, this, std::placeholders::_1)
     );
 
+    // Create Quality of Service for publisher 
+    auto qos = rclcpp::QoS(rclcpp::KeepLast(10));
+
+    // Create the publisher for the density of green in the image
+    state_pub_ = this->create_publisher<std_msgs::msg::Float32>("green_density_topic", qos);
+
     RCLCPP_INFO(this->get_logger(), "Turtlebot3 CameraReader node has been initialised.");
 }
 
@@ -54,22 +60,27 @@ void CameraReader::camera_callback(const sensor_msgs::msg::Image::SharedPtr msg)
     float total_amount_of_pixels = amount_of_r + amount_of_g + amount_of_b;
     
     // Calculate color densities as percentages, set member variables
-    last_r_density_ = 100.0f * amount_of_r / total;
-    last_g_density_ = 100.0f * amount_of_g / total;
-    last_b_density_ = 100.0f * amount_of_b / total;
+    last_r_density_ = 100.0f * amount_of_r / total_amount_of_pixels;
+    last_g_density_ = 100.0f * amount_of_g / total_amount_of_pixels;
+    last_b_density_ = 100.0f * amount_of_b / total_amount_of_pixels;
+
+    // publish the density of the green
+    std_msgs::msg::Float32 density_msg;
+    density_msg.data = last_g_density_;  // Assign float value to the message
+    state_pub_->publish(density_msg);
 }
 
 // Getter function for last red density recorded
-float CameraReader::get_last_r_density() {
+float CameraReader::get_last_r_density() const {
     return last_r_density_;
 }
 
 // Getter function for last green density recorded
-float CameraReader::get_last_g_density() {
+float CameraReader::get_last_g_density() const {
     return last_g_density_;
 }
 
 // Getter function for last blue density recorded
-float CameraReader::get_last_b_density() {
+float CameraReader::get_last_b_density() const {
     return last_b_density_;
 }
