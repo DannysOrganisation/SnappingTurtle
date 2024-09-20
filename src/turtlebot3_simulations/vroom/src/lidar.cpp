@@ -46,3 +46,11 @@ std::vector<double> Lidar::get_scan_data()
     std::vector<double> deep_copy_scan_data = scan_data_;
     return deep_copy_scan_data;
 }
+
+
+int main()
+{
+    rclcpp::init(argc, argv);
+    rclcpp::spin(std::make_shared<Lidar>());
+    rclcpp::shutdown();
+}

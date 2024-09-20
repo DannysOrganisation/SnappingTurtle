@@ -98,3 +98,10 @@ void Motordrive::drive_forward(){
 void Motordrive::slow_forward(){
     update_cmd_vel(0.5 * MotorControl::LINEAR_VELOCITY, 0.0);
 }
+
+int main()
+{
+  rclcpp::init(argc, argv);
+  rclcpp::spin(std::make_shared<Motordrive>());
+  rclcpp::shutdown();
+}
