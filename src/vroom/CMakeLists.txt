@@ -40,6 +40,12 @@ include_directories(include)
 add_executable(mantis ${source_})
 ament_target_dependencies(mantis ${dependencies})
 
+add_executable(fsmPublisher src/fsm.cpp)
+ament_target_dependencies(fsmPublisher ${dependencies})
+
+add_executable(motorSubscriber src/motordrive.cpp)
+ament_target_dependencies(motorSubscriber ${dependencies})
+
 install(TARGETS
   mantis
   DESTINATION lib/${PROJECT_NAME})

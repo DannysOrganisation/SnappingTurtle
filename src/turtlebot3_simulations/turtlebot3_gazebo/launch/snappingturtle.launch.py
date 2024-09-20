@@ -106,6 +106,16 @@ def generate_launch_description():
         output='screen'
     )
 
+    fsm_publisher = Node(
+        package = 'vroom',
+        executable='fsmPublisher'
+    )
+
+    motor_subscriber = Node(
+        package = 'vroom',
+        executable = 'motorSubscriber'
+    )
+
     # Create launch description
     ld = LaunchDescription()
 
@@ -115,5 +125,7 @@ def generate_launch_description():
     ld.add_action(robot_state_publisher_cmd)
     ld.add_action(spawn_turtlebot_cmd)
     ld.add_action(spawn_walls_cmd)
+    ld.add_action(fsm_publisher)
+    ld.add_action(motor_subscriber)
 
     return ld
