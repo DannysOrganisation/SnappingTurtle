@@ -1,4 +1,9 @@
-int main(){
+// ADD INCLUDES HERE ONCE WE'VE DECIDED ON A FINAL CLASS TO RUN EVERYTHING THROUGH
 
-    return 0;
+int main(int argc, char ** argv)
+{
+    rclcpp::init(argc, argv);
+    rclcpp::shutdown();
+
+  return 0;
 }

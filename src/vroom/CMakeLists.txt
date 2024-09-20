@@ -30,6 +30,7 @@ set(dependencies
 set(source_
     "src/main.cpp"
     "src/lidar.cpp"
+    "src/odom.cpp"
     "src/motordrive.cpp"
     )
 
