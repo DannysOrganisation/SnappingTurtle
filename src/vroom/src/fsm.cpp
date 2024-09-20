@@ -10,17 +10,17 @@ using namespace std::chrono_literals;
 
 FSM::FSM(): Node("fsm_node"), current_state_(GET_TB3_DIRECTION)
 {
-    // Create instances of Lidar, Odom, and Cam nodes
-    lidar_node_ = std::make_shared<Lidar>();
-    odom_node_ = std::make_shared<Odom>();
-    // cam_node_ = std::make_shared<Cam>();
+    
 
-    // create the state publisher
+    // create the state publisher   
     state_pub_ = this->create_publisher<std_msgs::msg::Int32>("state", STANDARD_BUFFER_SIZE);
 
     // create the timer that will cotrol how often the state gets published
     update_timer_ = this->create_wall_timer(
             10ms, std::bind(&FSM::update_state, this));
+
+    // display successful creation message
+    RCLCPP_INFO(this->get_logger(), "FSM_node has been successfully initialised");
 }
 
 FSM::~FSM()
@@ -68,6 +68,9 @@ void FSM::update_state()
 
             // extract the lidar data
             scan_data_ = lidar_node_->get_scan_data();
+            
+            // RCLCPP_INFO(this->get_logger(), "Scan Data: %f %f %f", scan_data_[0], scan_data_[1], scan_data_[2]);
+            
     
             if (scan_data_[CENTER] > Distance::CHECK_FORWARD_DIST)
             {   

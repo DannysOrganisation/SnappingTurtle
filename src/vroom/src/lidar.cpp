@@ -3,7 +3,9 @@
 //--Lidar Implementation--------------------------------------------
 Lidar::Lidar() : Node ("tb3_LiDar")
 {
-
+    // display successful creation message
+    RCLCPP_INFO(this->get_logger(), "Lidar_node has been successfully initialised");
+    
     //create LiDar subscriber
     lidar_sub_ = this->create_subscription<sensor_msgs::msg::LaserScan>(
         "scan", /* subscribe to topic /scan */ \

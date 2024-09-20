@@ -51,4 +51,10 @@ namespace Distance
 
 }
 
+namespace MotorControl
+{
+    constexpr double LINEAR_VELOCITY = 0.3;
+    constexpr double ANGULAR_VELOCITY = 0.2;
+}
+
 #endif

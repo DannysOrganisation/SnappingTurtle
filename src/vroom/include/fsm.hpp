@@ -20,6 +20,7 @@ This should publish to:
 #include "std_msgs/msg/int32.hpp"
 #include <rclcpp/rclcpp.hpp>
 #include <chrono>
+#include <future>
 
 using namespace std::chrono_literals;
 
@@ -50,7 +51,6 @@ class FSM : public rclcpp::Node
         std::shared_ptr<Odom> odom_node_;
         std::shared_ptr<Lidar> lidar_node_;
         // std::shared_ptr<CameraReader> camera_reader_node_;
-
 
         // wall finding member variables
         double min_distance;

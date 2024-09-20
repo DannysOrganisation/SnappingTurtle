@@ -26,9 +26,6 @@ it should publish to the /cmd_vel topic
 #include "std_msgs/msg/int32.hpp"
 
 
-#define LINEAR_VELOCITY  0.3
-#define ANGULAR_VELOCITY 0.2
-
 class Motordrive : public rclcpp::Node{
     public:
         Motordrive();
