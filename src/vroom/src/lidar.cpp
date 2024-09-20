@@ -1,7 +1,7 @@
 #include "lidar.hpp"
 
 //--CLidar Implementation--------------------------------------------
-CLidar::CLidar()
+Lidar::Lidar()
     : Node ("tb3_LiDar")
 {
 
@@ -21,10 +21,10 @@ CLidar::CLidar()
 }
 
 //--
-CLidar::~CLidar(){}
+Lidar::~Lidar(){}
 
 //--
-void CLidar::scan_callback(const sensor_msgs::msg::LaserScan::SharedPtr msg){
+void Lidar::scan_callback(const sensor_msgs::msg::LaserScan::SharedPtr msg){
 
     //save previous scan data into member variable
     prev_scan_data_ = scan_data_;

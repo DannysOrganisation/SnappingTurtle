@@ -26,15 +26,15 @@ Check ENUM for more details
 #include <sensor_msgs/msg/laser_scan.hpp>
 #include <rclcpp/rclcpp.hpp>
 
-#include "enum.h"
+#include "constants.hpp"
 #include "std_msgs/msg/string.hpp"
 
 
 //--CLidar Interface-----------------------------------------------------------
-class CLidar : public rclcpp::Node{
+class Lidar : public rclcpp::Node{
     public:
-        CLidar();
-        ~CLidar();
+        Lidar();
+        ~Lidar();
 
     private:
         /**
@@ -58,19 +58,11 @@ class CLidar : public rclcpp::Node{
         // scan angles we are intersted in observing (degrees)
         static constexpr int NUM_ANGLES = 5;
 
-        
-        //TO-DO MOVE THIS TO CONSTANTS FILE
-        static constexpr int CENTER_ANGLE = 0;
-        static constexpr int LEFT_ANGLE = 30;
-        static constexpr int  RIGHT_ANGLE = 330;
-        static constexpr int  HARD_LEFT_ANGLE = 90;
-        static constexpr int  HARD_RIGHT_ANGLE = 270;
-
-        uint16_t scan_angle[NUM_ANGLES] = {CENTER_ANGLE,
-                                           LEFT_ANGLE,
-                                           RIGHT_ANGLE,
-                                           HARD_LEFT_ANGLE,
-                                           HARD_RIGHT_ANGLE};
+        uint16_t scan_angle[NUM_ANGLES] = {LidarAngles::CENTER_ANGLE,
+                                           LidarAngles::LEFT_ANGLE,
+                                           LidarAngles::RIGHT_ANGLE,
+                                           LidarAngles::HARD_LEFT_ANGLE,
+                                           LidarAngles::HARD_RIGHT_ANGLE};
 
 };
 #endif
