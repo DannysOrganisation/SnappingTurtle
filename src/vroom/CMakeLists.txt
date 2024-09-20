@@ -28,6 +28,7 @@ set(source_
     "src/main.cpp"
     "src/lidar.cpp"
     "src/motordrive.cpp"
+    "src/odom.cpp"
     "src/CameraReader.cpp"
     )
 
@@ -38,7 +39,6 @@ include_directories(include)
 add_executable(mantis ${source_})
 ament_target_dependencies(mantis ${dependencies})
 
-# Install target
 install(TARGETS
   mantis
   DESTINATION lib/${PROJECT_NAME})

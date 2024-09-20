@@ -6,7 +6,8 @@ enum Directions {
     CENTER = 0,
     LEFT,
     RIGHT,
-    HARD_LEFT
+    HARD_LEFT,
+    HARD_RIGHT
 };
 
 enum States {
@@ -14,11 +15,10 @@ enum States {
  GET_TB3_DIRECTION,
  TB3_DRIVE_FORWARD,
  TB3_RIGHT_TURN,
+ TB3_RIGHT_TURN_90_DEG,
  TB3_LEFT_TURN,
- TB3_LEFT_90,
+ TB3_LEFT_TURN_90_DEG,
  TB3_SLOW_FORWARD
 };
-
-
 
 #endif
