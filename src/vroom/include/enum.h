@@ -9,6 +9,15 @@ enum Directions {
     HARD_LEFT
 };
 
+enum Views {
+    CENTER_ANGLE = 0,
+    LEFT_ANGLE = 30,
+    RIGHT_ANGLE = 330,
+    HARD_LEFT_ANGLE = 90,
+    HARD_RIGHT_ANGLE = 270
+}
+
+
 enum States {
  LOCATE_WALL = 0,
  TURN_TO_WALL,
