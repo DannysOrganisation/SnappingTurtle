@@ -28,11 +28,27 @@ enum States {
 
 // Constants for LIDAR ANGLE DETECTIONS
 namespace LidarAngles {
+
+    // number of angles
+    constexpr int NUM_ANGLES = 5;
+
+    // angle definitions
     constexpr int CENTER_ANGLE = 0;
     constexpr int LEFT_ANGLE = 30;
     constexpr int RIGHT_ANGLE = 330;
     constexpr int HARD_LEFT_ANGLE = 90;
     constexpr int HARD_RIGHT_ANGLE = 270;
+}
+
+
+namespace Distance
+{   
+    constexpr double NO_WALL_DIST = 0.57;
+    constexpr double CHECK_FORWARD_DIST = 0.4;
+    constexpr double CHECK_SIDE_DIST = 0.4;
+    constexpr double ESCAPE_RANGE = 2 * DEG2RAD;
+    constexpr double ESCAPE_RANGE_90 = 90 * DEG2RAD;
+
 }
 
 #endif
