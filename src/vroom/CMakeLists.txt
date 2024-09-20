@@ -32,6 +32,7 @@ set(source_
     "src/lidar.cpp"
     "src/odom.cpp"
     "src/motordrive.cpp"
+    "src/fsm.cpp"
     )
 
 include_directories(include)

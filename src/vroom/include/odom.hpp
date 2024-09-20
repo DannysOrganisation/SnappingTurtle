@@ -9,7 +9,7 @@ This should then store this in a member called robot_pose_
 
 */
 
-#include "enum.h"
+#include "constants.hpp"
 #include <nav_msgs/msg/odometry.hpp>
 #include <tf2/LinearMath/Matrix3x3.h>
 #include <tf2/LinearMath/Quaternion.h>
@@ -35,4 +35,4 @@ class Odom : public rclcpp::Node
         double robot_pose_;
         double prev_robot_pose_;
 
-}
+};
