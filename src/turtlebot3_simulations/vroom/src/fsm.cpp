@@ -153,3 +153,12 @@ void FSM::update_state()
             break;
    }
 }
+
+#ifdef FSM_MAIN
+int main(int argc, char** argv)
+{
+  rclcpp::init(argc, argv);
+  rclcpp::spin(std::make_shared<FSM>());
+  rclcpp::shutdown();
+}
+#endif

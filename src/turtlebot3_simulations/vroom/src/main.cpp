@@ -1,4 +1,5 @@
-// ADD INCLUDES HERE ONCE WE'VE DECIDED ON A FINAL CLASS TO RUN EVERYTHING THROUGH
+// Use this file for testing individual modules
+// Use snapping_turtle_launch.py for doing system level tests
 #include "fsm.hpp"
 
 int main(int argc, char ** argv)
