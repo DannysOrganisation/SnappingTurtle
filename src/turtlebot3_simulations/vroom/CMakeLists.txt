@@ -30,6 +30,7 @@ set(source_
     "src/motordrive.cpp"
     "src/odom.cpp"
     "src/CameraReader.cpp"
+    "src/fsm.cpp"
     )
 
 # Include directories
