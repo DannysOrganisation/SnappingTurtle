@@ -58,8 +58,11 @@ class CLidar : public rclcpp::Node{
         // scan angles we are intersted in observing (degrees)
         static constexpr int NUM_ANGLES = 5;
 
-        //TODO Add more angles: 270 for hard right
-        uint16_t scan_angle[NUM_ANGLES] = {0, 30, 330, 90, 270};
+        uint16_t scan_angle[NUM_ANGLES] = {CENTER_ANGLE,
+                                           LEFT_ANGLE,
+                                           RIGHT_ANGLE,
+                                           HARD_LEFT_ANGLE,
+                                           HARD_RIGHT_ANGLE};
 
 };
 #endif
