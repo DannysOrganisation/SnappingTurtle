@@ -1,8 +1,7 @@
 #include "motordrive.hpp"
 
 
-Motordrive::Motordrive()
-    : Node ("tb3_motor_drive")
+Motordrive::Motordrive() : Node ("tb3_motor_drive")
 {
     //initialise publisher to /cmd_vel
     cmd_vel_pub_ = this->create_publisher<geometry_msgs::msg::Twist>("cmd_vel", 10);
@@ -26,6 +25,7 @@ void Motordrive::state_callback(const std_msgs::msg::Int32 msg){
     
     //store current state
     current_state_ = msg.data;
+    RCLCPP_INFO(this->get_logger(), "Current State: '%d'", current_state_);
 
     // determine which drive method to call
     switch (current_state_){
