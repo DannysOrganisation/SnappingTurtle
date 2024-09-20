@@ -10,6 +10,7 @@ By James Hocking
 
 
 #include "CameraReader.hpp"
+#include "enum.h"
 
 
 // constructor for the CameraReader class
@@ -46,11 +47,11 @@ void CameraReader::camera_callback(const sensor_msgs::msg::Image::SharedPtr msg)
     float amount_of_b = 0;
 
     // Process the image data - structured as [r1, g1, b1, r2, g2, b2 ...]
-    for (size_t i = 0; i < data.size(); i += 3) {
+    for (size_t i = 0; i < data.size(); i += AMOUNT_OF_COLOURS) {
         // get each of the rgb values
-        uint8_t r = data[i];       // Red channel
-        uint8_t g = data[i + 1];   // Green channel
-        uint8_t b = data[i + 2];   // Blue channel
+        uint8_t r = data[i + RED_INDEX_ADJUSTMENT];       
+        uint8_t g = data[i + GREEN_INDEX_ADJUSTMENT];   
+        uint8_t b = data[i + BLUE_INDEX_ADJUSTMENT];   
 
         amount_of_r += r;
         amount_of_g += g;

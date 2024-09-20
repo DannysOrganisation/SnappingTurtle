@@ -21,4 +21,11 @@ enum States {
  TB3_SLOW_FORWARD
 };
 
+enum CameraSettingsColors {
+  RED_INDEX_ADJUSTMENT = 0,
+  GREEN_INDEX_ADJUSTMENT,
+  BLUE_INDEX_ADJUSTMENT,  
+  AMOUNT_OF_COLOURS
+}
+
 #endif
