@@ -36,6 +36,9 @@ class Lidar : public rclcpp::Node{
         Lidar();
         ~Lidar();
 
+        // getter for the scan data
+        std::vector<double> get_scan_data();
+
     private:
         /**
          * @brief this function is the callback for when @lidar_sub_ receives
@@ -55,14 +58,11 @@ class Lidar : public rclcpp::Node{
         std::vector<double> scan_data_;
         std::vector<double> prev_scan_data_;
 
-        // scan angles we are intersted in observing (degrees)
-        static constexpr int NUM_ANGLES = 5;
-
-        uint16_t scan_angle[NUM_ANGLES] = {LidarAngles::CENTER_ANGLE,
-                                           LidarAngles::LEFT_ANGLE,
-                                           LidarAngles::RIGHT_ANGLE,
-                                           LidarAngles::HARD_LEFT_ANGLE,
-                                           LidarAngles::HARD_RIGHT_ANGLE};
+        uint16_t scan_angle[LidarAngles::NUM_ANGLES] = {LidarAngles::CENTER_ANGLE,
+                                                        LidarAngles::LEFT_ANGLE,
+                                                        LidarAngles::RIGHT_ANGLE,
+                                                        LidarAngles::HARD_LEFT_ANGLE,
+                                                        LidarAngles::HARD_RIGHT_ANGLE};
 
 };
 #endif
