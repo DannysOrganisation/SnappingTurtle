@@ -2,7 +2,7 @@
 Odometry node IMPLEMENTATION
 */
 
-#include "vroom/odom.hpp"
+#include "odom.hpp"
 
 using namespace std::chrono_literals;
 
@@ -10,12 +10,18 @@ Odom::Odom() : Node("Odometry_Node")
 {   
 
     // initialise the current pose
-    robot_pose_ = 0.0
+    robot_pose_ = 0.0;
     prev_robot_pose_ = 0.0;
 
     // Initialise subscriber
     odom_sub_ = this->create_subscription<nav_msgs::msg::Odometry>(
-    "odom", qos, std::bind(&Turtlebot3Drive::odom_callback, this, std::placeholders::_1));
+        "odom", /* subscribe to topic /scan */ \
+        rclcpp::SensorDataQoS(), /* use the qos number set by rclcpp */ \
+        std::bind(                  
+        &Odom::odom_callback, /* bind the callback function */ \
+        this, \
+        std::placeholders::_1)
+        );
 
     // display successful creation message
     RCLCPP_INFO(this->get_logger(), "Odometry_Node has been successfully initialised");
@@ -37,6 +43,10 @@ yaw direction of the robot in 'robot_pose'
 */
 void Odom::odom_callback(const nav_msgs::msg::Odometry::SharedPtr msg)
 {
+
+  // save the previous result
+  prev_robot_pose_ = robot_pose_;
+
   // break the message down into a quaternion
   tf2::Quaternion q(
     msg->pose.pose.orientation.x,
@@ -71,5 +81,3 @@ double Odom::get_robot_pose() const
 {
     return robot_pose_;
 }
-
-

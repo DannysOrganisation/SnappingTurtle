@@ -76,25 +76,25 @@ void Motordrive::update_cmd_vel(double linear, double angular)
 
 //update cmd_vel appropriately for each method
 void Motordrive::turn_left(){
-    update_cmd_vel(0.0, ANGULAR_VELOCITY);
+    update_cmd_vel(0.0, MotorControl::ANGULAR_VELOCITY);
 }
 
 void Motordrive::turn_right(){
-    update_cmd_vel(0.0, -1*ANGULAR_VELOCITY);
+    update_cmd_vel(0.0, -1*MotorControl::ANGULAR_VELOCITY);
 }
 
 void Motordrive::turn_hard_left(){
-    update_cmd_vel(0.1*LINEAR_VELOCITY, ANGULAR_VELOCITY);
+    update_cmd_vel(0.1*MotorControl::LINEAR_VELOCITY, MotorControl::ANGULAR_VELOCITY);
 }
 
 void Motordrive::turn_hard_right(){
-    update_cmd_vel(0.1*LINEAR_VELOCITY,-1*ANGULAR_VELOCITY);
+    update_cmd_vel(0.1*MotorControl::LINEAR_VELOCITY,-1*MotorControl::ANGULAR_VELOCITY);
 }
 
 void Motordrive::drive_forward(){
-    update_cmd_vel(LINEAR_VELOCITY, 0.0);
+    update_cmd_vel(MotorControl::LINEAR_VELOCITY, 0.0);
 }
 
 void Motordrive::slow_forward(){
-    update_cmd_vel(0.5 * LINEAR_VELOCITY, 0.0);
+    update_cmd_vel(0.5 * MotorControl::LINEAR_VELOCITY, 0.0);
 }
