@@ -16,6 +16,7 @@ enum Directions {
 
 enum States {
  LOCATE_WALL = 0,
+ ROTATE_IN_PLACE,
  TURN_TO_WALL,
  GET_TB3_DIRECTION,
  TB3_DRIVE_FORWARD,

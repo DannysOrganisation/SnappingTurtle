@@ -89,9 +89,14 @@ void FSM::update_state()
    {
 
         case LOCATE_WALL:
-            /*
-            STILL HAVE TO DO THIS
-            */
+            
+            start_pose_ = robot_pose_;
+            break;
+
+        case ROTATE_IN_PLACE:
+
+            if fabs(robot_pose_ - start_pose_ < 0.01)
+                current_state_ = TURN_TO_WALL;
             break;
 
         case TURN_TO_WALL:
@@ -103,54 +108,7 @@ void FSM::update_state()
         case GET_TB3_DIRECTION:
 
             // RCLCPP_INFO(this->get_logger(), "Scan Data: %f %f %f", scan_data_[0], scan_data_[1], scan_data_[2]);
-            
-    
-            if (scan_data_[CENTER] > Distance::CHECK_FORWARD_DIST)
-            {   
-                if (scan_data_[LEFT] < Distance::CHECK_SIDE_DIST)
-                {
-                    prev_robot_pose_ = robot_pose_;
-                    prev_scan_data_ = scan_data_;
-                    current_state_ = TB3_RIGHT_TURN;
-                }
-                else if (scan_data_[RIGHT] < Distance::CHECK_SIDE_DIST)
-                {
-                    prev_robot_pose_ = robot_pose_;
-                    prev_scan_data_ = scan_data_;
-                    current_state_ = TB3_LEFT_TURN;
-                }
-                else if (scan_data_[HARD_LEFT] > (Distance::NO_WALL_DIST) && prev_scan_data_[HARD_LEFT] <= Distance::NO_WALL_DIST)
-                {
-                    prev_robot_pose_ = robot_pose_;
-                    prev_scan_data_ = scan_data_;
-                    current_state_ = TB3_LEFT_TURN_90_DEG;
-                }
-                // if the wall on the left is getting too further away, turn towards it
-                else if (scan_data_[LEFT] > prev_scan_data_[LEFT] && scan_data_[LEFT] >  (1.3 * Distance::CHECK_SIDE_DIST) && (scan_data_[LEFT] < 2* Distance::CHECK_SIDE_DIST)){
-                prev_robot_pose_ = robot_pose_;
-                prev_scan_data_ = scan_data_;
-                current_state_ = TB3_LEFT_TURN;
-                }
-                //if a left hand corner is approaching
-                else if (scan_data_[LEFT] > 1.5 * Distance::CHECK_SIDE_DIST && prev_scan_data_[LEFT] > 1.5 * Distance::CHECK_SIDE_DIST){
-                    prev_robot_pose_ = robot_pose_;
-                    prev_scan_data_ = scan_data_;
-                    current_state_ = TB3_SLOW_FORWARD;
-                }
-                // if we are not close to any walls then keep driving forward
-                else {
-                    prev_scan_data_ = scan_data_;
-                    current_state_ = TB3_DRIVE_FORWARD;
-                }
-            }
-
-            // if there is something in front of the robot then turn right
-            if (scan_data_[CENTER] < Distance::CHECK_FORWARD_DIST) {
-                prev_scan_data_ = scan_data_;
-                prev_robot_pose_ = robot_pose_;
-                current_state_ = TB3_RIGHT_TURN;
-            }
-
+            GET_TB3_DIRECTION_logic();
             break;
         
         case TB3_DRIVE_FORWARD:
@@ -183,6 +141,59 @@ void FSM::update_state()
             current_state_ = GET_TB3_DIRECTION;
             break;
    }
+}
+
+
+/*
+Next State Logic For Basic Direction Getting Function
+*/
+void FSM::GET_TB3_DIRECTION_logic()
+{
+    if (scan_data_[CENTER] > Distance::CHECK_FORWARD_DIST)
+    {   
+        if (scan_data_[LEFT] < Distance::CHECK_SIDE_DIST)
+        {
+            prev_robot_pose_ = robot_pose_;
+            prev_scan_data_ = scan_data_;
+            current_state_ = TB3_RIGHT_TURN;
+        }
+        else if (scan_data_[RIGHT] < Distance::CHECK_SIDE_DIST)
+        {
+            prev_robot_pose_ = robot_pose_;
+            prev_scan_data_ = scan_data_;
+            current_state_ = TB3_LEFT_TURN;
+        }
+        else if (scan_data_[HARD_LEFT] > (Distance::NO_WALL_DIST) && prev_scan_data_[HARD_LEFT] <= Distance::NO_WALL_DIST)
+        {
+            prev_robot_pose_ = robot_pose_;
+            prev_scan_data_ = scan_data_;
+            current_state_ = TB3_LEFT_TURN_90_DEG;
+        }
+        // if the wall on the left is getting too further away, turn towards it
+        else if (scan_data_[LEFT] > prev_scan_data_[LEFT] && scan_data_[LEFT] >  (1.3 * Distance::CHECK_SIDE_DIST) && (scan_data_[LEFT] < 2* Distance::CHECK_SIDE_DIST)){
+        prev_robot_pose_ = robot_pose_;
+        prev_scan_data_ = scan_data_;
+        current_state_ = TB3_LEFT_TURN;
+        }
+        //if a left hand corner is approaching
+        else if (scan_data_[LEFT] > 1.5 * Distance::CHECK_SIDE_DIST && prev_scan_data_[LEFT] > 1.5 * Distance::CHECK_SIDE_DIST){
+            prev_robot_pose_ = robot_pose_;
+            prev_scan_data_ = scan_data_;
+            current_state_ = TB3_SLOW_FORWARD;
+        }
+        // if we are not close to any walls then keep driving forward
+        else {
+            prev_scan_data_ = scan_data_;
+            current_state_ = TB3_DRIVE_FORWARD;
+        }
+    }
+
+    // if there is something in front of the robot then turn right
+    if (scan_data_[CENTER] < Distance::CHECK_FORWARD_DIST) {
+        prev_scan_data_ = scan_data_;
+        prev_robot_pose_ = robot_pose_;
+        current_state_ = TB3_RIGHT_TURN;
+    }
 }
 
 #ifdef FSM_MAIN

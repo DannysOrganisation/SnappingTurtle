@@ -57,8 +57,10 @@ class FSM : public rclcpp::Node
         // std::shared_ptr<CameraReader> camera_reader_node_;
 
         // wall finding member variables
-        double min_distance;
+        double start_pose_;
         double min_distance_pose;
+        double min_distance_;
+        
 
         // track poses that need to be remembe
         double robot_pose_;
@@ -66,4 +68,9 @@ class FSM : public rclcpp::Node
 
         std::vector<double> scan_data_;
         std::vector<double> prev_scan_data_;
+
+        // State Transition Logic
+        
+        void GET_TB3_DIRECTION_logic();
+        
 };
