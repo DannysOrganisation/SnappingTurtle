@@ -95,7 +95,7 @@ void FSM::update_state()
 
         case ROTATE_IN_PLACE:
 
-            if fabs(robot_pose_ - start_pose_ < 0.01)
+            if(fabs(robot_pose_ - start_pose_ )< 0.01)
                 current_state_ = TURN_TO_WALL;
             break;
 
