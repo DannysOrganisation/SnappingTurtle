@@ -14,6 +14,7 @@ This should then store this in a member called robot_pose_
 #include <tf2/LinearMath/Matrix3x3.h>
 #include <tf2/LinearMath/Quaternion.h>
 #include <rclcpp/rclcpp.hpp>
+#include "std_msgs/msg/float64.hpp"
 
 
 class Odom : public rclcpp::Node
@@ -29,6 +30,11 @@ class Odom : public rclcpp::Node
 
         // Callback function for subscriber
         void odom_callback(const nav_msgs::msg::Odometry::SharedPtr msg);
+
+        // Odometry Publisher
+        rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr odom_pub_; 
+        rclcpp::TimerBase::SharedPtr update_timer_;
+        void update_pose();
 
         // Member variables
         rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub_;

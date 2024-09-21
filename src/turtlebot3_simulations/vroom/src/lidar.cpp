@@ -1,11 +1,10 @@
 #include "lidar.hpp"
 
+using namespace std::chrono_literals;
+
 //--Lidar Implementation--------------------------------------------
 Lidar::Lidar() : Node ("tb3_LiDar")
-{
-    // display successful creation message
-    RCLCPP_INFO(this->get_logger(), "Lidar_node has been successfully initialised");
-    
+{ 
     //create LiDar subscriber
     lidar_sub_ = this->create_subscription<sensor_msgs::msg::LaserScan>(
         "scan", /* subscribe to topic /scan */ \
@@ -19,6 +18,16 @@ Lidar::Lidar() : Node ("tb3_LiDar")
     //resize scan data member variables
     scan_data_.resize(LidarAngles::NUM_ANGLES);
     prev_scan_data_.resize(LidarAngles::NUM_ANGLES);   
+
+
+    // initialise publisher
+    scan_data_pub_ = this->create_publisher<std_msgs::msg::Float64MultiArray>("lidar", STANDARD_BUFFER_SIZE);
+    // create the timer that will cotrol how often the state gets published
+    update_timer_ = this->create_wall_timer(10ms, std::bind(&Lidar::update_scan_data, this));
+
+    RCLCPP_INFO(this->get_logger(), "Lidar_node has been successfully initialised");
+
+
 }
 
 //--
@@ -37,6 +46,17 @@ void Lidar::scan_callback(const sensor_msgs::msg::LaserScan::SharedPtr msg){
         scan_data_[num] = msg->ranges.at(scan_angle[num]);
         }
     }
+}
+
+
+void Lidar::update_scan_data()
+{   
+    // create the message and insert the scan data into it
+    auto message = std_msgs::msg::Float64MultiArray();
+    message.data.insert(message.data.end(), scan_data_.begin(), scan_data_.end());
+
+    // publish the message
+    scan_data_pub_->publish(message);
 }
 
 
