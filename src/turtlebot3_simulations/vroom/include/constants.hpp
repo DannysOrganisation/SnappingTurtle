@@ -57,4 +57,11 @@ namespace MotorControl
     constexpr double ANGULAR_VELOCITY = 0.2;
 }
 
+enum CameraSettingsColors {
+  RED_INDEX_ADJUSTMENT = 0,
+  GREEN_INDEX_ADJUSTMENT,
+  BLUE_INDEX_ADJUSTMENT,  
+  AMOUNT_OF_COLOURS
+}
+
 #endif

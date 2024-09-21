@@ -12,6 +12,7 @@
 
 #include "constants.hpp"
 #include "std_msgs/msg/string.hpp"
+#include "std_msgs/msg/float64_multi_array.hpp"
 
 
 //--CLidar Interface-----------------------------------------------------------
@@ -35,8 +36,16 @@ class Lidar : public rclcpp::Node{
          */
         void scan_callback(const sensor_msgs::msg::LaserScan::SharedPtr msg);
 
+
+        // publisher callback function
+        void update_scan_data();
+
         //lidar subscriber
         rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr lidar_sub_;
+        
+        // scan_data_publisher
+        rclcpp::Publisher<std_msgs::msg::Float64MultiArray>::SharedPtr scan_data_pub_; 
+        rclcpp::TimerBase::SharedPtr update_timer_;
 
         //store the current and previous LiDar scan information
         std::vector<double> scan_data_;

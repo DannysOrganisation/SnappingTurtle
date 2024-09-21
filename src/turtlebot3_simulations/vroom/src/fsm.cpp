@@ -11,8 +11,26 @@ using namespace std::chrono_literals;
 FSM::FSM(): Node("fsm_node"), current_state_(GET_TB3_DIRECTION)
 {
     
-    lidar_node_ = std::make_shared<Lidar>();
-    odom_node_ = std::make_shared<Odom>();
+    //create LiDar subscriber
+    scan_data_sub_ = this->create_subscription<std_msgs::msg::Float64MultiArray>(
+        "lidar", /* subscribe to topic /lidar */ \
+        rclcpp::SensorDataQoS(), /* use the qos number set by rclcpp */ \
+        std::bind(                  
+        &FSM::scan_data_callback, /* bind the callback function */ \
+        this, \
+        std::placeholders::_1)
+        );
+    
+    // create robot pose subscriber
+    robot_pose_sub_ = this->create_subscription<std_msgs::msg::Float64>(
+        "robotpose", /* subscribe to topic /lidar */ \
+        rclcpp::SensorDataQoS(), /* use the qos number set by rclcpp */ \
+        std::bind(                  
+        &FSM::robot_pose_callback, /* bind the callback function */ \
+        this, \
+        std::placeholders::_1)
+        );
+    
     
     // create the state publisher   
     state_pub_ = this->create_publisher<std_msgs::msg::Int32>("state", STANDARD_BUFFER_SIZE);
@@ -30,6 +48,22 @@ FSM::~FSM()
     RCLCPP_INFO(this->get_logger(), "FSM node has been terminated");
 }
 
+void FSM::scan_data_callback(const std_msgs::msg::Float64MultiArray::SharedPtr msg)
+{
+// Clear the existing data in scan_data_
+    scan_data_.clear();
+
+    // Copy the data from the message to scan_data_
+    scan_data_.insert(scan_data_.end(), msg->data.begin(), msg->data.end());
+    return;
+}
+
+void FSM::robot_pose_callback(const std_msgs::msg::Float64::SharedPtr msg)
+{
+    robot_pose_ = msg->data;
+    return;
+}
+
 
 void FSM::update_state()
 {
@@ -42,7 +76,7 @@ void FSM::update_state()
     state_pub_->publish(msg);
 
     // Log the current state
-    RCLCPP_INFO(this->get_logger(), "Published state: %d", msg.data);
+    // RCLCPP_INFO(this->get_logger(), "Published state: %d", msg.data);
 
 
     /*
@@ -68,9 +102,6 @@ void FSM::update_state()
 
         case GET_TB3_DIRECTION:
 
-            // extract the lidar data
-            scan_data_ = lidar_node_->get_scan_data();
-            
             // RCLCPP_INFO(this->get_logger(), "Scan Data: %f %f %f", scan_data_[0], scan_data_[1], scan_data_[2]);
             
     
@@ -78,31 +109,31 @@ void FSM::update_state()
             {   
                 if (scan_data_[LEFT] < Distance::CHECK_SIDE_DIST)
                 {
-                    prev_robot_pose_ = odom_node_->get_robot_pose();
+                    prev_robot_pose_ = robot_pose_;
                     prev_scan_data_ = scan_data_;
                     current_state_ = TB3_RIGHT_TURN;
                 }
                 else if (scan_data_[RIGHT] < Distance::CHECK_SIDE_DIST)
                 {
-                    prev_robot_pose_ = odom_node_->get_robot_pose();
+                    prev_robot_pose_ = robot_pose_;
                     prev_scan_data_ = scan_data_;
                     current_state_ = TB3_LEFT_TURN;
                 }
                 else if (scan_data_[HARD_LEFT] > (Distance::NO_WALL_DIST) && prev_scan_data_[HARD_LEFT] <= Distance::NO_WALL_DIST)
                 {
-                    prev_robot_pose_ = odom_node_->get_robot_pose();
+                    prev_robot_pose_ = robot_pose_;
                     prev_scan_data_ = scan_data_;
                     current_state_ = TB3_LEFT_TURN_90_DEG;
                 }
                 // if the wall on the left is getting too further away, turn towards it
                 else if (scan_data_[LEFT] > prev_scan_data_[LEFT] && scan_data_[LEFT] >  (1.3 * Distance::CHECK_SIDE_DIST) && (scan_data_[LEFT] < 2* Distance::CHECK_SIDE_DIST)){
-                prev_robot_pose_ = odom_node_->get_robot_pose();
+                prev_robot_pose_ = robot_pose_;
                 prev_scan_data_ = scan_data_;
                 current_state_ = TB3_LEFT_TURN;
                 }
                 //if a left hand corner is approaching
                 else if (scan_data_[LEFT] > 1.5 * Distance::CHECK_SIDE_DIST && prev_scan_data_[LEFT] > 1.5 * Distance::CHECK_SIDE_DIST){
-                    prev_robot_pose_ = odom_node_->get_robot_pose();
+                    prev_robot_pose_ = robot_pose_;
                     prev_scan_data_ = scan_data_;
                     current_state_ = TB3_SLOW_FORWARD;
                 }
@@ -116,7 +147,7 @@ void FSM::update_state()
             // if there is something in front of the robot then turn right
             if (scan_data_[CENTER] < Distance::CHECK_FORWARD_DIST) {
                 prev_scan_data_ = scan_data_;
-                prev_robot_pose_ = odom_node_->get_robot_pose();
+                prev_robot_pose_ = robot_pose_;
                 current_state_ = TB3_RIGHT_TURN;
             }
 
@@ -132,18 +163,18 @@ void FSM::update_state()
         case TB3_RIGHT_TURN:
             
             // stay in rotate state until we get to a better position
-            if (fabs(prev_robot_pose_ - odom_node_->get_robot_pose()) >= Distance::ESCAPE_RANGE)
+            if (fabs(prev_robot_pose_ - robot_pose_) >= Distance::ESCAPE_RANGE)
                 current_state_ = GET_TB3_DIRECTION;
             break;
         
         case TB3_LEFT_TURN:
             // stay in rotate state until we get to a better position
-            if (fabs(prev_robot_pose_ - odom_node_->get_robot_pose()) >= Distance::ESCAPE_RANGE)
+            if (fabs(prev_robot_pose_ - robot_pose_) >= Distance::ESCAPE_RANGE)
                 current_state_ = GET_TB3_DIRECTION;
             break;
         
         case TB3_LEFT_TURN_90_DEG:
-             if (fabs(prev_robot_pose_ - odom_node_->get_robot_pose()) >= Distance::ESCAPE_RANGE_90)
+             if (fabs(prev_robot_pose_ - robot_pose_) >= Distance::ESCAPE_RANGE_90)
                 current_state_ = GET_TB3_DIRECTION;
             break;
         

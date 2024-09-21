@@ -17,6 +17,7 @@ James Hocking, 2024
 #include <sensor_msgs/msg/image.hpp>
 #include "std_msgs/msg/float32.hpp"
 #include <iostream>
+#include "constants.hpp"
 
 
 class CameraReader : public rclcpp::Node {         

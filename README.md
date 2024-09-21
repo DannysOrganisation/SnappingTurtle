@@ -28,12 +28,14 @@ Colcon is short for collective construct, and ensures that all packages have bee
 Then type the following command 
 ```bash
 source install/setup.bash
-. /usr/share/gazebo/setup.sh
 ros2 launch turtlebot3_gazebo <launchfile_name>.launch.py
 ```
-As a one liner `colcon build --symlink-install && source install/setup.bash && . /usr/share/gazebo/setup.sh && ros2 launch turtlebot3_gazebo snappingturtle.launch.py`
-The first line, as implied by the filename makes sure that gazebo is setup correctly. The second line uses the launchfile to 
-run the code.
+
+The actually drivin code can be spawned through the following code in a new terminal.
+
+```bash
+colcon build --symlink-install && source install/setup.bash && . /usr/share/gazebo/setup.sh && ros2 launch vroom snapping_turtle_launch.py
+```
 
 # Solve the maze
 Once the world is created and the robot initiated, to run the main do the following:

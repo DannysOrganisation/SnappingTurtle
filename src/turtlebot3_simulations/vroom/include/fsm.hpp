@@ -9,6 +9,9 @@ FSM IMPLEMENTATION FILE
 #include "odom.hpp" 
 // #include "CameraReader.hpp"
 #include "std_msgs/msg/int32.hpp"
+#include "std_msgs/msg/float64_multi_array.hpp"
+#include "std_msgs/msg/float64.hpp"
+
 #include <rclcpp/rclcpp.hpp>
 #include <chrono>
 
@@ -32,6 +35,17 @@ class FSM : public rclcpp::Node
         // timer to control how often state gets published
         rclcpp::TimerBase::SharedPtr update_timer_;
 
+
+        // ROS topic subscribers
+        rclcpp::Subscription<std_msgs::msg::Float64MultiArray>::SharedPtr scan_data_sub_;
+        rclcpp::Subscription<std_msgs::msg::Float64>::SharedPtr robot_pose_sub_;
+
+        void scan_data_callback(const std_msgs::msg::Float64MultiArray::SharedPtr msg);
+        void robot_pose_callback(const std_msgs::msg::Float64::SharedPtr msg);
+
+        // ADD IN THE CAMERA ONE HERE
+
+
         // the current state of the system
         int current_state_;
 
@@ -47,6 +61,7 @@ class FSM : public rclcpp::Node
         double min_distance_pose;
 
         // track poses that need to be remembe
+        double robot_pose_;
         double prev_robot_pose_;
 
         std::vector<double> scan_data_;
