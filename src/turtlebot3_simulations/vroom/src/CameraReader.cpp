@@ -10,7 +10,6 @@ By James Hocking
 
 
 #include "CameraReader.hpp"
-#include "enum.h"
 
 
 // constructor for the CameraReader class
