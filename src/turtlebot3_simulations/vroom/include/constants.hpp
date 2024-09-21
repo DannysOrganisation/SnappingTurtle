@@ -62,6 +62,6 @@ enum CameraSettingsColors {
   GREEN_INDEX_ADJUSTMENT,
   BLUE_INDEX_ADJUSTMENT,  
   AMOUNT_OF_COLOURS
-}
+};
 
 #endif
