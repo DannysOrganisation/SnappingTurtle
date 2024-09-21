@@ -34,7 +34,7 @@ ros2 launch turtlebot3_gazebo <launchfile_name>.launch.py
 The actually drivin code can be spawned through the following code in a new terminal.
 
 ```bash
-ros2 launch vroom snapping_turtle_launch.py
+colcon build --symlink-install && source install/setup.bash && . /usr/share/gazebo/setup.sh && ros2 launch vroom snapping_turtle_launch.py
 ```
 
 # Solve the maze
