@@ -11,20 +11,48 @@ enum Directions {
     CENTER = 0,
     LEFT,
     RIGHT,
-    HARD_LEFT
+    HARD_LEFT,
+    HARD_RIGHT
 };
 
 enum States {
- LOCATE_WALL = 0,
- ROTATE_IN_PLACE,
- TURN_TO_WALL,
- GET_TB3_DIRECTION,
- TB3_DRIVE_FORWARD,
- TB3_RIGHT_TURN,
- TB3_RIGHT_TURN_90_DEG,
- TB3_LEFT_TURN,
- TB3_LEFT_TURN_90_DEG,
- TB3_SLOW_FORWARD
+
+    // initial wall following states
+    LOCATE_WALL = 0,
+    ROTATE_IN_PLACE,
+    TURN_TO_WALL,
+
+    // standard driving states
+    GET_TB3_DIRECTION,
+    TB3_DRIVE_FORWARD,
+    TB3_RIGHT_TURN,
+    TB3_RIGHT_TURN_90_DEG,
+    TB3_LEFT_TURN,
+    TB3_LEFT_TURN_90_DEG,
+    TB3_SLOW_FORWARD,
+
+    // goal detection states
+    DETECTED_GOAL,
+    FIND_GOAL_RIGHT,
+    FIND_GOAL_LEFT,
+    FIND_GOAL_AVOID_WALL_LEFT,
+    FIND_GOAL_AVOID_WALL_RIGHT,
+    DRIVE_TO_GOAL,
+    STOP,
+    DANCE
+
+};
+
+enum CameraSettingsColors {
+  RED_INDEX_ADJUSTMENT = 0,
+  GREEN_INDEX_ADJUSTMENT,
+  BLUE_INDEX_ADJUSTMENT,  
+  AMOUNT_OF_COLOURS
+};
+
+enum WallFollowChoice {
+    LEFT_WALL = 0,
+    RIGHT_WALL
 };
 
 // Constants for LIDAR ANGLE DETECTIONS
@@ -47,9 +75,10 @@ namespace Distance
     constexpr double NO_WALL_DIST = 0.57;
     constexpr double CHECK_FORWARD_DIST = 0.4;
     constexpr double CHECK_SIDE_DIST = 0.4;
-    constexpr double ESCAPE_RANGE = 2 * DEG2RAD;
+    constexpr double ESCAPE_RANGE = 1 * DEG2RAD;
     constexpr double ESCAPE_RANGE_90 = 90 * DEG2RAD;
     constexpr double MAX_DISTANCE = 4.0;
+    constexpr double CHECK_ANGLE_WRAP = 180.0 * DEG2RAD;
 
 }
 
@@ -57,15 +86,14 @@ namespace MotorControl
 {
     constexpr double LINEAR_VELOCITY = 0.3;
     constexpr double ANGULAR_VELOCITY = 0.2;
-    constexpr double TIME_FOR_ONE_ROTATION = (M_PI/ANGULAR_VELOCITY);
+    constexpr double TIME_FOR_HALF_ROTATION = (M_PI/ANGULAR_VELOCITY);
 }
 
-enum CameraSettingsColors {
-  RED_INDEX_ADJUSTMENT = 0,
-  GREEN_INDEX_ADJUSTMENT,
-  BLUE_INDEX_ADJUSTMENT,  
-  AMOUNT_OF_COLOURS
-};
+namespace GoalTracking
+{
+    constexpr double GOAL_DETECT_LOWER_THRESHOLD = 35;
+    constexpr double GOAL_FOUND = 55;
+}
 
 namespace ColorThresholds {
     constexpr double GREEN_CENTER_THESHOLD = 40;

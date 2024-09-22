@@ -25,7 +25,7 @@ CameraReader::CameraReader() : Node("turtlebot3_camera_reader") {
     auto qos = rclcpp::QoS(rclcpp::KeepLast(10));
 
     // Create the publisher for the density of green in the image
-    state_pub_ = this->create_publisher<std_msgs::msg::Float32>("green_density_topic", qos);
+    state_pub_ = this->create_publisher<std_msgs::msg::Float32>("green_density", qos);
 
     // Create the publisher for if the green is in the center of the image
     center_green_density_pub_ = this->create_publisher<std_msgs::msg::Bool>("is_green_center", qos);
@@ -93,7 +93,7 @@ void CameraReader::camera_callback(const sensor_msgs::msg::Image::SharedPtr msg)
 
     // publish the density of the green
     std_msgs::msg::Float32 density_msg;
-    density_msg.data = center_percent_of_green;  // Assign float value to the message
+    density_msg.data = last_g_density_;  // Assign float value to the message
     state_pub_->publish(density_msg);
 
 

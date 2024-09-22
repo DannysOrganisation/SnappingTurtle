@@ -193,11 +193,8 @@
           </box>
         </geometry>
         <material>
-          <script>
-            <uri>file://media/materials/scripts/gazebo.material</uri>
-            <name>Gazebo/Grey</name>
-          </script>
-          <ambient>0.435294 0.796078 0.67451 1</ambient>
+          <ambient>0 1 0 1</ambient>   <!-- Fully green ambient color -->
+          <diffuse>0 1 0 1</diffuse>   <!-- Fully green diffuse color -->
         </material>
         <meta>
           <layer>0</layer>

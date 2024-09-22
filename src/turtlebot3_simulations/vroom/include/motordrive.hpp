@@ -84,11 +84,26 @@ class Motordrive : public rclcpp::Node{
         */
         void turn_right_slow();
 
+        /*
+        Turns right quickly
+        */
+        void turn_right_fast();
+
+        /*
+        * #brief this function has the robot turn around slowly
+        */
+        void turn_left_slow();
+
 
         /*
         Function stops the robot
         */
         void stop();
+
+        /*
+        Makes the robot dance after solving the maze
+        */
+        void dance();
 
         //memory of the current state
         int current_state_;

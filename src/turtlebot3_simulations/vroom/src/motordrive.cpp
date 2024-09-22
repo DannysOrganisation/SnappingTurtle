@@ -36,12 +36,11 @@ void Motordrive::state_callback(const std_msgs::msg::Int32 msg){
             break;
 
         case ROTATE_IN_PLACE:
-            turn_right();
+            turn_right_fast();
             break;
 
         case TURN_TO_WALL:
-            // Slower than earlier so we can get more data
-            turn_right_slow();
+            turn_right();
             break;
 
         case TB3_DRIVE_FORWARD:
@@ -67,11 +66,32 @@ void Motordrive::state_callback(const std_msgs::msg::Int32 msg){
         case TB3_RIGHT_TURN_90_DEG:
             turn_hard_right();
             break;
+
+        case DETECTED_GOAL:
+            stop();
+            break;
         
+        case FIND_GOAL_RIGHT:
+            turn_right_slow();
+            break;
+        
+        case FIND_GOAL_LEFT:
+            turn_left_slow();
+            break;
+        
+        case DRIVE_TO_GOAL:
+            drive_forward();
+            break;
+
+        case STOP:
+            stop();
+            break;
+
+
         //added default state to drive forward... probably not the best option
         //I think a better option would be to come to a stop? not sure tbh
         default:
-            drive_forward();
+            stop();
             break;
 
     }
@@ -94,6 +114,11 @@ void Motordrive::turn_left(){
     update_cmd_vel(0.0, MotorControl::ANGULAR_VELOCITY);
 }
 
+void Motordrive::turn_left_slow()
+{
+    update_cmd_vel(0.0, 0.5 * MotorControl::ANGULAR_VELOCITY);
+}
+
 void Motordrive::turn_right(){
     update_cmd_vel(0.0, -1*MotorControl::ANGULAR_VELOCITY);
 }
@@ -103,12 +128,17 @@ void Motordrive::turn_right_slow()
     update_cmd_vel(0.0, -1* 0.5 * MotorControl::ANGULAR_VELOCITY);
 }
 
+void Motordrive::turn_right_fast()
+{
+    update_cmd_vel(0.0, -1.5*MotorControl::ANGULAR_VELOCITY);
+}
+
 void Motordrive::turn_hard_left(){
     update_cmd_vel(0.1*MotorControl::LINEAR_VELOCITY, MotorControl::ANGULAR_VELOCITY);
 }
 
 void Motordrive::turn_hard_right(){
-    update_cmd_vel(0.1*MotorControl::LINEAR_VELOCITY,-1*MotorControl::ANGULAR_VELOCITY);
+    update_cmd_vel(0.0, -1*MotorControl::ANGULAR_VELOCITY);
 }
 
 void Motordrive::drive_forward(){
@@ -118,6 +148,11 @@ void Motordrive::drive_forward(){
 void Motordrive::stop()
 {
     update_cmd_vel(0.0, 0.0);
+}
+
+void Motordrive::dance()
+{
+    update_cmd_vel(0.0, 100*MotorControl::ANGULAR_VELOCITY);
 }
 
 void Motordrive::slow_forward(){

@@ -72,11 +72,11 @@ def generate_launch_description():
     curr_maze_pos = maze_positions[maze_num]
 
     # Get the robot position
-    robot_positions = {"Enclosed-Maze": ["0.0", "0.0", "0.01"], "Floating":["0.0", "0.0", "0.01"]}
+    robot_positions = {"Enclosed-Maze": ["-0.76", "0.62", "0.0"], "Floating":["0.0", "0.0", "0.01"]}
     curr_robot_positions = robot_positions[maze_num]
 
     # Get the robot rotation
-    robot_rotation = {"Enclosed-Maze": "-3.141", "Floating":"-3.141"}
+    robot_rotation = {"Enclosed-Maze": "1.14", "Floating":"-3.141"}
     rotation = robot_rotation[maze_num]
 
     # Launch configuration for robot spawn
@@ -106,8 +106,27 @@ def generate_launch_description():
         output='screen'
     )
 
+    # spawn some of the sensors
+    lidar_sensor = Node(
+        package='vroom',
+        executable='lidar',
+        name='lidar_node'
+    )
+
+    odom_sensor = Node(
+        package='vroom',
+        executable='odom',
+        name='odom_node'
+    )
+
+    camera_sensor = Node(
+        package='vroom',
+        executable='camerareader',
+        name='camerareader_node'
+    )
     # Create launch description
     ld = LaunchDescription()
+
 
     # Add actions
     ld.add_action(gzserver_cmd)
@@ -115,5 +134,7 @@ def generate_launch_description():
     ld.add_action(robot_state_publisher_cmd)
     ld.add_action(spawn_turtlebot_cmd)
     ld.add_action(spawn_walls_cmd)
-
+    ld.add_action(lidar_sensor)
+    ld.add_action(odom_sensor)
+    ld.add_action(camera_sensor)
     return ld
