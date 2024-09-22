@@ -6,17 +6,11 @@ Oogway group. It holds code that allows a turtlebot simulation to solve a maze.
 Must have a launch file which calls the world to launch. The worlds
 are held in the `src/turtlebot3_simulations/turtlebot3_gazebo/worlds` folder.
 To check them out enter the folder from the terminal and execute `gazebo <wold_name>.world`
-<br /><br />
-For running the simulation, the following is included in the launch file:
-```python
-world = os.path.join(
-    get_package_share_directory('turtlebot3_gazebo'),
-    'worlds',
-    'turtlebot3_dqn_stage3.world'
-)
+
+To run the world file, run
+```bash
+colcon build --symlink-install && source install/setup.bash && . /usr/share/gazebo/setup.sh && ros2 launch turtlebot3_gazebo snappingturtle.launch.py
 ```
-Some useful things for worlds to help when making the maze -> you can use the Build Editor within 
-Gazebo to make a new world and use the Wall feature.
 
 
 ## To run the program
