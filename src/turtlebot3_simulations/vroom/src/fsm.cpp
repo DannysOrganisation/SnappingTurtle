@@ -118,18 +118,6 @@ void FSM::update_state()
     auto msg = std_msgs::msg::Int32();
     msg.data = current_state_;
 
-    // Debugging Print Statements for current state
-    // std::map<int,std::string> m;
-    // m.insert( std::pair<int, std::string>(LOCATE_WALL, "LOCATE_WALL") );
-    // m.insert( std::pair<int, std::string>(ROTATE_IN_PLACE, "ROTATE_IN_PLACE") );
-    // m.insert( std::pair<int, std::string>(TURN_TO_WALL, "TURN_TO_WALL") );
-    // m.insert( std::pair<int, std::string>(GET_TB3_DIRECTION, "GET_TB3_DIRECTION") );
-    // m.insert( std::pair<int, std::string>(TB3_DRIVE_FORWARD, "TB3_DRIVE_FORWARD") );
-    // m.insert( std::pair<int, std::string>(TB3_RIGHT_TURN, "TB3_RIGHT_TURN") );
-    // m.insert( std::pair<int, std::string>(TB3_RIGHT_TURN_90_DEG, "TB3_RIGHT_TURN_90_DEG") );
-    // m.insert( std::pair<int, std::string>(TB3_LEFT_TURN, "TB3_LEFT_TURN") );
-    // m.insert( std::pair<int, std::string>(TB3_LEFT_TURN_90_DEG, "TB3_LEFT_TURN_90_DEG") );
-    // m.insert( std::pair<int, std::string>(TB3_SLOW_FORWARD, "TB3_SLOW_FORWARD") );
 
     // RCLCPP_INFO(this->get_logger(), ("Current State: " + m.at(current_state_)).c_str());
 
@@ -148,7 +136,7 @@ void FSM::update_state()
     // }
     if(density_ > GoalTracking::GOAL_FOUND && prev_scan_data_[CENTER] < 0.5)
     {
-        current_state_ = DANCE;
+        current_state_ = STOP;
         return;
     }
 
