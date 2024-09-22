@@ -100,6 +100,11 @@ class Motordrive : public rclcpp::Node{
         */
         void stop();
 
+        /*
+        Makes the robot dance after solving the maze
+        */
+        void dance();
+
         //memory of the current state
         int current_state_;
 

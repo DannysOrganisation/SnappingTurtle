@@ -9,7 +9,8 @@ FSM CLASS IMPLEMENTATION
 
 using namespace std::chrono_literals;
 
-FSM::FSM(): Node("fsm_node"), current_state_(TB3_DRIVE_FORWARD)
+// FSM::FSM(): Node("fsm_node"), current_state_(LOCATE_WALL)
+FSM::FSM(): Node("fsm_node"), current_state_(LOCATE_WALL)
 {
     // set default values for everything
     scan_data_.resize(LidarAngles::NUM_ANGLES, 0.0);
@@ -144,9 +145,9 @@ void FSM::update_state()
     //     current_state_ = DETECTED_GOAL;
     //     return;
     // }
-    if(density_ > GoalTracking::GOAL_FOUND && prev_scan_data_[CENTER] < 1)
+    if(density_ > GoalTracking::GOAL_FOUND && prev_scan_data_[CENTER] < 0.5)
     {
-        current_state_ = STOP;
+        current_state_ = DANCE;
         return;
     }
 
@@ -427,10 +428,10 @@ void FSM::DRIVE_TO_GOAL_logic()
     }
     
     // check if we've headed in the wrong direction
-    // if we've reached our destination then stop
+    // if we've reached our destination then dance!
     if(density_ > GoalTracking::GOAL_FOUND)
     {
-        current_state_ = STOP;
+        current_state_ = DANCE;
     }
     else if(density_ < previous_density_)
     {

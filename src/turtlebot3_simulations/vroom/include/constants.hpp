@@ -37,7 +37,8 @@ enum States {
     FIND_GOAL_AVOID_WALL_LEFT,
     FIND_GOAL_AVOID_WALL_RIGHT,
     DRIVE_TO_GOAL,
-    STOP
+    STOP,
+    DANCE
 
 };
 

@@ -87,6 +87,10 @@ void Motordrive::state_callback(const std_msgs::msg::Int32 msg){
             stop();
             break;
         
+        case DANCE:
+            dance();
+            break;
+
         //added default state to drive forward... probably not the best option
         //I think a better option would be to come to a stop? not sure tbh
         default:
@@ -147,6 +151,11 @@ void Motordrive::drive_forward(){
 void Motordrive::stop()
 {
     update_cmd_vel(0.0, 0.0);
+}
+
+void Motordrive::dance()
+{
+    update_cmd_vel(0.0, 100*MotorControl::ANGULAR_VELOCITY);
 }
 
 void Motordrive::slow_forward(){
