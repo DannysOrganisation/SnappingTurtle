@@ -189,6 +189,9 @@ void FSM::update_state()
                     prev_robot_pose_ -= 360 * DEG2RAD;
                 }
                 else {
+                    // reset scan variabes
+                    prev_scan_data_ = temp_scan_data_;
+                    prev_robot_pose_ = robot_pose_;
                     current_state_ = GET_TB3_DIRECTION;
                 }
             }
@@ -202,6 +205,9 @@ void FSM::update_state()
                     prev_robot_pose_ += 360 * DEG2RAD;
                 }
                 else {
+                    // reset scan variabes
+                    prev_scan_data_ = temp_scan_data_;
+                    prev_robot_pose_ = robot_pose_;
                     current_state_ = GET_TB3_DIRECTION;
                 }
             }
@@ -266,6 +272,14 @@ void FSM::GET_TB3_DIRECTION_logic()
                 prev_scan_data_ = temp_scan_data_;
                 current_state_ = TB3_SLOW_FORWARD;
             }
+            // check to see if we want to switch islands
+            else if(prev_scan_data_[HARD_RIGHT] - temp_scan_data_[HARD_RIGHT] > 1)
+            {
+                prev_robot_pose_ = robot_pose_;
+                prev_scan_data_ = temp_scan_data_;
+                current_state_ = TB3_RIGHT_TURN_90_DEG;
+                left_wall_follow_ = false;
+            }
         }
         else if(!left_wall_follow_)
         {
@@ -278,10 +292,18 @@ void FSM::GET_TB3_DIRECTION_logic()
 
             else if (temp_scan_data_[RIGHT] > 1.5 * Distance::CHECK_SIDE_DIST && prev_scan_data_[RIGHT] > 1.5 * Distance::CHECK_SIDE_DIST)
             {
-            prev_robot_pose_ = robot_pose_;
-            prev_scan_data_ = temp_scan_data_;
-            current_state_ = TB3_SLOW_FORWARD;
+                prev_robot_pose_ = robot_pose_;
+                prev_scan_data_ = temp_scan_data_;
+                current_state_ = TB3_SLOW_FORWARD;
              }
+             // check to see if we want to switch islands
+            else if(prev_scan_data_[HARD_LEFT] - temp_scan_data_[HARD_LEFT] > 1)
+            {
+                prev_robot_pose_ = robot_pose_;
+                prev_scan_data_ = temp_scan_data_;
+                current_state_ = TB3_LEFT_TURN_90_DEG;
+                left_wall_follow_ = false;
+            }
         }
         
         // if we are not close to any walls then keep driving forward
