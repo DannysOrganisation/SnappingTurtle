@@ -25,7 +25,7 @@ CameraReader::CameraReader() : Node("turtlebot3_camera_reader") {
     auto qos = rclcpp::QoS(rclcpp::KeepLast(10));
 
     // Create the publisher for the density of green in the image
-    state_pub_ = this->create_publisher<std_msgs::msg::Float32>("green_density_topic", qos);
+    state_pub_ = this->create_publisher<std_msgs::msg::Float32>("green_density", qos);
 
     RCLCPP_INFO(this->get_logger(), "Turtlebot3 CameraReader node has been initialised.");
 }
