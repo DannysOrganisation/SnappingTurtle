@@ -106,8 +106,27 @@ def generate_launch_description():
         output='screen'
     )
 
+    # spawn some of the sensors
+    lidar_sensor = Node(
+        package='vroom',
+        executable='lidar',
+        name='lidar_node'
+    )
+
+    odom_sensor = Node(
+        package='vroom',
+        executable='odom',
+        name='odom_node'
+    )
+
+    camera_sensor = Node(
+        package='vroom',
+        executable='camerareader',
+        name='camerareader_node'
+    )
     # Create launch description
     ld = LaunchDescription()
+
 
     # Add actions
     ld.add_action(gzserver_cmd)
@@ -115,5 +134,7 @@ def generate_launch_description():
     ld.add_action(robot_state_publisher_cmd)
     ld.add_action(spawn_turtlebot_cmd)
     ld.add_action(spawn_walls_cmd)
-
+    ld.add_action(lidar_sensor)
+    ld.add_action(odom_sensor)
+    ld.add_action(camera_sensor)
     return ld
