@@ -22,5 +22,10 @@ def generate_launch_description():
             package='vroom',
             executable='motordrive',
             name='motordrive_node'
+        ),
+        Node(
+            package='vroom',
+            executable='camerareader',
+            name='camerareader_node'
         )
     ])

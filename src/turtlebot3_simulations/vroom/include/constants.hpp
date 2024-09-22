@@ -15,16 +15,35 @@ enum Directions {
 };
 
 enum States {
- LOCATE_WALL = 0,
- ROTATE_IN_PLACE,
- TURN_TO_WALL,
- GET_TB3_DIRECTION,
- TB3_DRIVE_FORWARD,
- TB3_RIGHT_TURN,
- TB3_RIGHT_TURN_90_DEG,
- TB3_LEFT_TURN,
- TB3_LEFT_TURN_90_DEG,
- TB3_SLOW_FORWARD
+
+    // initial wall following states
+    LOCATE_WALL = 0,
+    ROTATE_IN_PLACE,
+    TURN_TO_WALL,
+
+    // standard driving states
+    GET_TB3_DIRECTION,
+    TB3_DRIVE_FORWARD,
+    TB3_RIGHT_TURN,
+    TB3_RIGHT_TURN_90_DEG,
+    TB3_LEFT_TURN,
+    TB3_LEFT_TURN_90_DEG,
+    TB3_SLOW_FORWARD,
+
+    // goal detection states
+    DETECTED_GOAL,
+    FIND_GOAL_RIGHT,
+    FIND_GOAL_LEFT,
+    DRIVE_TO_GOAL,
+    STOP
+
+};
+
+enum CameraSettingsColors {
+  RED_INDEX_ADJUSTMENT = 0,
+  GREEN_INDEX_ADJUSTMENT,
+  BLUE_INDEX_ADJUSTMENT,  
+  AMOUNT_OF_COLOURS
 };
 
 // Constants for LIDAR ANGLE DETECTIONS
@@ -57,14 +76,14 @@ namespace MotorControl
 {
     constexpr double LINEAR_VELOCITY = 0.3;
     constexpr double ANGULAR_VELOCITY = 0.2;
-    constexpr double TIME_FOR_ONE_ROTATION = (M_PI/ANGULAR_VELOCITY);
+    constexpr double TIME_FOR_HALF_ROTATION = (M_PI/ANGULAR_VELOCITY);
 }
 
-enum CameraSettingsColors {
-  RED_INDEX_ADJUSTMENT = 0,
-  GREEN_INDEX_ADJUSTMENT,
-  BLUE_INDEX_ADJUSTMENT,  
-  AMOUNT_OF_COLOURS
-};
+namespace GoalTracking
+{
+    constexpr double GOAL_DETECT_LOWER_THRESHOLD = 40;
+    constexpr double GOAL_DETECT_THRESHOLD = 50;
+    constexpr double GOAL_FOUND = 80;
+}
 
 #endif

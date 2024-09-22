@@ -67,6 +67,26 @@ void Motordrive::state_callback(const std_msgs::msg::Int32 msg){
         case TB3_RIGHT_TURN_90_DEG:
             turn_hard_right();
             break;
+
+        case DETECTED_GOAL:
+            stop();
+            break;
+        
+        case FIND_GOAL_RIGHT:
+            turn_right_slow();
+            break;
+        
+        case FIND_GOAL_LEFT:
+            turn_left_slow();
+            break;
+        
+        case DRIVE_TO_GOAL:
+            drive_forward();
+            break;
+
+        case STOP:
+            stop();
+            break;
         
         //added default state to drive forward... probably not the best option
         //I think a better option would be to come to a stop? not sure tbh
@@ -92,6 +112,11 @@ void Motordrive::update_cmd_vel(double linear, double angular)
 //update cmd_vel appropriately for each method
 void Motordrive::turn_left(){
     update_cmd_vel(0.0, MotorControl::ANGULAR_VELOCITY);
+}
+
+void Motordrive::turn_left_slow()
+{
+    update_cmd_vel(0.0, 0.5 * MotorControl::ANGULAR_VELOCITY);
 }
 
 void Motordrive::turn_right(){
