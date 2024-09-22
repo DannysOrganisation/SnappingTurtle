@@ -40,7 +40,7 @@ include_directories(include)
 add_executable(lidar src/lidar.cpp)
 add_executable(odom src/odom.cpp)
 add_executable(motordrive src/motordrive.cpp)
-add_executable(fsm src/fsm.cpp src/lidar.cpp src/odom.cpp)
+add_executable(fsm src/fsm.cpp)
 add_executable(camerareader src/camera.cpp)
 
 target_compile_definitions(odom PRIVATE ODOM_MAIN)

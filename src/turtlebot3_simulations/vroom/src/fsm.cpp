@@ -11,7 +11,6 @@ Editted: Adam Riesel
 */
 
 #include "fsm.hpp"
-#include <map>
 
 using namespace std::chrono_literals;
 
