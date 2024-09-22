@@ -79,6 +79,17 @@ class Motordrive : public rclcpp::Node{
          */
         void slow_forward();
 
+        /*
+        * #brief this function has the robot turn around slowly
+        */
+        void turn_right_slow();
+
+
+        /*
+        Function stops the robot
+        */
+        void stop();
+
         //memory of the current state
         int current_state_;
 

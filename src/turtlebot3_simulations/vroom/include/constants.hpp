@@ -3,7 +3,7 @@
 
 #include <math.h>
 
-constexpr int STANDARD_BUFFER_SIZE = 10;
+constexpr int STANDARD_BUFFER_SIZE = 100;
 constexpr double DEG2RAD (M_PI / 180.0);
 constexpr double RAD2DEG (180.0 / M_PI);
 
@@ -16,6 +16,7 @@ enum Directions {
 
 enum States {
  LOCATE_WALL = 0,
+ ROTATE_IN_PLACE,
  TURN_TO_WALL,
  GET_TB3_DIRECTION,
  TB3_DRIVE_FORWARD,
@@ -48,6 +49,7 @@ namespace Distance
     constexpr double CHECK_SIDE_DIST = 0.4;
     constexpr double ESCAPE_RANGE = 2 * DEG2RAD;
     constexpr double ESCAPE_RANGE_90 = 90 * DEG2RAD;
+    constexpr double MAX_DISTANCE = 4.0;
 
 }
 
@@ -55,6 +57,7 @@ namespace MotorControl
 {
     constexpr double LINEAR_VELOCITY = 0.3;
     constexpr double ANGULAR_VELOCITY = 0.2;
+    constexpr double TIME_FOR_ONE_ROTATION = (M_PI/ANGULAR_VELOCITY);
 }
 
 enum CameraSettingsColors {

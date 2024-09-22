@@ -9,8 +9,8 @@ FSM IMPLEMENTATION FILE
 #include "odom.hpp" 
 // #include "CameraReader.hpp"
 #include "std_msgs/msg/int32.hpp"
-#include "std_msgs/msg/float64_multi_array.hpp"
-#include "std_msgs/msg/float64.hpp"
+#include "std_msgs/msg/float32_multi_array.hpp"
+#include "std_msgs/msg/float32.hpp"
 
 #include <rclcpp/rclcpp.hpp>
 #include <chrono>
@@ -37,11 +37,11 @@ class FSM : public rclcpp::Node
 
 
         // ROS topic subscribers
-        rclcpp::Subscription<std_msgs::msg::Float64MultiArray>::SharedPtr scan_data_sub_;
-        rclcpp::Subscription<std_msgs::msg::Float64>::SharedPtr robot_pose_sub_;
+        rclcpp::Subscription<std_msgs::msg::Float32MultiArray>::SharedPtr scan_data_sub_;
+        rclcpp::Subscription<std_msgs::msg::Float32>::SharedPtr robot_pose_sub_;
 
-        void scan_data_callback(const std_msgs::msg::Float64MultiArray::SharedPtr msg);
-        void robot_pose_callback(const std_msgs::msg::Float64::SharedPtr msg);
+        void scan_data_callback(const std_msgs::msg::Float32MultiArray::SharedPtr msg);
+        void robot_pose_callback(const std_msgs::msg::Float32::SharedPtr msg);
 
         // ADD IN THE CAMERA ONE HERE
 
@@ -57,8 +57,10 @@ class FSM : public rclcpp::Node
         // std::shared_ptr<CameraReader> camera_reader_node_;
 
         // wall finding member variables
-        double min_distance;
-        double min_distance_pose;
+        double start_pose_;
+        double min_distance_pose_;
+        double min_distance_;
+        
 
         // track poses that need to be remembe
         double robot_pose_;
@@ -66,4 +68,14 @@ class FSM : public rclcpp::Node
 
         std::vector<double> scan_data_;
         std::vector<double> prev_scan_data_;
+        std::vector<double> temp_scan_data_;
+
+        // a ros clck
+        rclcpp::Clock ros_clk;
+        rclcpp::Time current_time;
+        bool locate_flag_;
+    
+        // State Transition Logic
+        void GET_TB3_DIRECTION_logic();
+        
 };
