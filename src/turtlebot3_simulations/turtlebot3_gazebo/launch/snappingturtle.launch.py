@@ -23,7 +23,7 @@ def generate_launch_description():
     use_sim_time = LaunchConfiguration('use_sim_time', default='true')
 
     # Select maze number
-    dict_of_options = {"1": "TestMaze1", "testColor":"TestMaze2"}
+    dict_of_options = {"Enclosed-Maze": "Enclosed", "Floating":"Floating"}
     maze_num = input(f"What Practice Maze number do you want to try? (Options: {', '.join(list(dict_of_options.keys()))}): ")
     if maze_num in list(dict_of_options.keys()):
         maze_name = dict_of_options[maze_num]
@@ -68,15 +68,15 @@ def generate_launch_description():
     )
 
     # Get the maze position
-    maze_positions = {"1": ["-8.2", "-7.0", "0.0"], "testColor":["0.0", "2.5", "0.0"]}
+    maze_positions = {"Enclosed-Maze": ["2", "5", "0.0"], "Floating":["3.9", "1.5", "0.0"]} # ["4", "1", "0.0"]
     curr_maze_pos = maze_positions[maze_num]
 
     # Get the robot position
-    robot_positions = {"1": ["0.0", "0.0", "0.01"], "testColor":["0.0", "0.0", "0.0"]}
+    robot_positions = {"Enclosed-Maze": ["-0.76", "0.62", "0.0"], "Floating":["0.0", "0.0", "0.01"]}
     curr_robot_positions = robot_positions[maze_num]
 
     # Get the robot rotation
-    robot_rotation = {"1": "-1.5708", "testColor":"-3.141"}
+    robot_rotation = {"Enclosed-Maze": "1.14", "Floating":"-3.141"}
     rotation = robot_rotation[maze_num]
 
     # Launch configuration for robot spawn
@@ -106,8 +106,27 @@ def generate_launch_description():
         output='screen'
     )
 
+    # spawn some of the sensors
+    lidar_sensor = Node(
+        package='vroom',
+        executable='lidar',
+        name='lidar_node'
+    )
+
+    odom_sensor = Node(
+        package='vroom',
+        executable='odom',
+        name='odom_node'
+    )
+
+    camera_sensor = Node(
+        package='vroom',
+        executable='camerareader',
+        name='camerareader_node'
+    )
     # Create launch description
     ld = LaunchDescription()
+
 
     # Add actions
     ld.add_action(gzserver_cmd)
@@ -115,5 +134,7 @@ def generate_launch_description():
     ld.add_action(robot_state_publisher_cmd)
     ld.add_action(spawn_turtlebot_cmd)
     ld.add_action(spawn_walls_cmd)
-
+    ld.add_action(lidar_sensor)
+    ld.add_action(odom_sensor)
+    ld.add_action(camera_sensor)
     return ld

@@ -28,7 +28,7 @@ set(source_
     "src/lidar.cpp"
     "src/motordrive.cpp"
     "src/odom.cpp"
-    "src/CameraReader.cpp"
+    "src/camera.cpp"
     "src/fsm.cpp"
     )
 
@@ -39,6 +39,7 @@ add_executable(lidar src/lidar.cpp)
 add_executable(odom src/odom.cpp)
 add_executable(motordrive src/motordrive.cpp)
 add_executable(fsm src/fsm.cpp src/lidar.cpp src/odom.cpp)
+add_executable(camerareader src/camera.cpp)
 
 target_compile_definitions(odom PRIVATE ODOM_MAIN)
 target_compile_definitions(lidar PRIVATE LIDAR_MAIN)
@@ -49,12 +50,14 @@ ament_target_dependencies(lidar ${dependencies})
 ament_target_dependencies(odom ${dependencies})
 ament_target_dependencies(motordrive ${dependencies})
 ament_target_dependencies(fsm ${dependencies})
+ament_target_dependencies(camerareader ${dependencies})
 
 install(TARGETS
   lidar
   odom
   motordrive
   fsm
+  camerareader
   DESTINATION lib/${PROJECT_NAME})
 
 # Handle testing and linting

@@ -23,6 +23,12 @@ FSM::FSM(): Node("fsm_node"), current_state_(TB3_DRIVE_FORWARD)
     robot_pose_ = 0.0;
     prev_robot_pose_ = 0.0;
 
+    density_ = 0.0;
+    previous_density_ = 0.0;
+    max_density_ = 0.0;
+
+    goal_detected_ = false;
+
     // initialise the clock
     rclcpp::Clock ros_clock(RCL_SYSTEM_TIME); 
 
@@ -46,6 +52,16 @@ FSM::FSM(): Node("fsm_node"), current_state_(TB3_DRIVE_FORWARD)
         this, \
         std::placeholders::_1)
         );
+
+    // density subscriber
+    density_sub_ = this->create_subscription<std_msgs::msg::Float32>(
+        "green_density", /* subscribe to topic /lidar */ \
+        rclcpp::SensorDataQoS(), /* use the qos number set by rclcpp */ \
+        std::bind(                  
+        &FSM::density_callback, /* bind the callback function */ \
+        this, \
+        std::placeholders::_1)
+        );
     
     
     // create the state publisher   
@@ -62,6 +78,12 @@ FSM::FSM(): Node("fsm_node"), current_state_(TB3_DRIVE_FORWARD)
 FSM::~FSM()
 {
     RCLCPP_INFO(this->get_logger(), "FSM node has been terminated");
+}
+
+void FSM::density_callback(const std_msgs::msg::Float32::SharedPtr msg)
+{
+    density_ = msg->data;
+    return;
 }
 
 void FSM::scan_data_callback(const std_msgs::msg::Float32MultiArray::SharedPtr msg)
@@ -115,50 +137,34 @@ void FSM::update_state()
     // create a temporary variable that won't change during processing
     temp_scan_data_ = scan_data_;
 
-    // create a variable for finding the wall
-    double time_diff;
+    // determine if we enter the goal seeking states
+    // if(density_ > GoalTracking::GOAL_DETECT_LOWER_THRESHOLD && !(goal_detected_))
+    // {
+    //     goal_detected_ = true; 
+    //     current_state_ = DETECTED_GOAL;
+    //     return;
+    // }
+    if(density_ > GoalTracking::GOAL_FOUND && prev_scan_data[CENTER] < 1)
+    {
+        current_state_ = STOP;
+        return;
+    }
 
    switch (current_state_)
    {
 
         case LOCATE_WALL:
-            // RCLCPP_INFO(this->get_logger(), "Attempting to find the closest wall");
-            start_pose_ = robot_pose_;
-            min_distance_ = Distance::MAX_DISTANCE;
-            current_state_ = ROTATE_IN_PLACE;
-            locate_flag_ = false;
-
-            // set the timer
-            current_time = ros_clk.now();
+            LOCATE_WALL_logic();
             break;
 
         case ROTATE_IN_PLACE:
-
-            // check if we're back at the start position
-            time_diff = ros_clk.now().seconds() - current_time.seconds() ;
-
-            if(time_diff > MotorControl::TIME_FOR_ONE_ROTATION)
-                locate_flag_ = true;
-                // RCLCPP_INFO(this->get_logger(), "Time difference is %f", current_time.seconds() - ros_clk.now().seconds());
-                // RCLCPP_INFO(this->get_logger(), "Locate flag has been reset");
-
-
-            // Check that we are back to the starting position (we've done a full rotation)
-            if(locate_flag_ && fabs(robot_pose_ - start_pose_) < 1e-1)
-                current_state_ = TURN_TO_WALL;
-            
-            // as we rotate check to see if we've found a closer wall yet
-            if(temp_scan_data_[CENTER] < min_distance_)
-            {
-                min_distance_ = temp_scan_data_[CENTER];
-                min_distance_pose_ = robot_pose_;
-            }
+            ROTATE_IN_PLACE_logic();
             break;
 
         case TURN_TO_WALL:
             // RCLCPP_INFO(this->get_logger(), "Closest wall found. Turning towards it. target_pose %f current pose %f", min_distance_pose_, robot_pose_);
             if(fabs(robot_pose_ - min_distance_pose_) < 5e-3)
-                current_state_ = TB3_DRIVE_FORWARD;
+                current_state_ = GET_TB3_DIRECTION;
             break;
 
         case GET_TB3_DIRECTION:
@@ -237,6 +243,32 @@ void FSM::update_state()
             // go straight to analysing direction after publishing the slow forward
             current_state_ = GET_TB3_DIRECTION;
             break;
+
+        case DETECTED_GOAL:
+            DETECTED_GOAL_logic();
+            break;
+        
+        case FIND_GOAL_RIGHT:
+            FIND_GOAL_RIGHT_logic();
+            break; 
+        
+        case FIND_GOAL_LEFT: 
+            FIND_GOAL_LEFT_logic();
+            break;
+
+        case FIND_GOAL_AVOID_WALL_LEFT:
+            FIND_GOAL_AVOID_WALL_LEFT_logic();
+            break;
+
+        case FIND_GOAL_AVOID_WALL_RIGHT: 
+            FIND_GOAL_AVOID_WALL_RIGHT_logic();
+            break;
+        
+        case DRIVE_TO_GOAL: 
+            DRIVE_TO_GOAL_logic();
+            break;
+
+
    }
 }
 
@@ -291,6 +323,135 @@ void FSM::GET_TB3_DIRECTION_logic()
         prev_robot_pose_ = robot_pose_;
         current_state_ = TB3_RIGHT_TURN_90_DEG;
     }
+}
+
+
+void FSM::ROTATE_IN_PLACE_logic()
+{
+
+    if(ros_clk.now().seconds() - current_time.seconds() > MotorControl::TIME_FOR_HALF_ROTATION)
+        locate_flag_ = true;
+        // RCLCPP_INFO(this->get_logger(), "Time difference is %f", current_time.seconds() - ros_clk.now().seconds());
+        // RCLCPP_INFO(this->get_logger(), "Locate flag has been reset");
+
+
+    // Check that we are back to the starting position (we've done a full rotation)
+    if(locate_flag_ && fabs(robot_pose_ - start_pose_) < 1e-1)
+        current_state_ = TURN_TO_WALL;
+    
+    // as we rotate check to see if we've found a closer wall yet handle bad data returning 0
+    if(temp_scan_data_[CENTER] < min_distance_ && temp_scan_data_[CENTER] > 1e-2)
+    {
+        min_distance_ = temp_scan_data_[CENTER];
+        min_distance_pose_ = robot_pose_;
+    }
+}
+
+void FSM::LOCATE_WALL_logic()
+{
+    RCLCPP_INFO(this->get_logger(), "Attempting to find the closest wall");
+
+    // set relevant variables for beggining wall search
+    start_pose_ = robot_pose_;
+    min_distance_ = Distance::MAX_DISTANCE;
+    current_state_ = ROTATE_IN_PLACE;
+    locate_flag_ = false;
+
+    // set the timer
+    current_time = ros_clk.now();
+}
+
+void FSM::DETECTED_GOAL_logic()
+{
+    previous_density_ = density_;
+    current_state_ = FIND_GOAL_RIGHT;
+}
+
+void FSM::FIND_GOAL_RIGHT_logic()
+{   
+
+    // check if we're turning in the wrong direction
+    if(density_ < previous_density_)
+        current_state_ = FIND_GOAL_LEFT;
+    else
+    {
+        current_state_ = DRIVE_TO_GOAL;
+    }
+
+    if (density_ > max_density_)
+        max_density_ = density_;
+
+    previous_density_ = density_;
+    
+}
+
+
+void FSM::FIND_GOAL_LEFT_logic()
+{
+
+
+    // check if we're turning in the wrong direction
+    if(density_ < previous_density_)
+        current_state_ = FIND_GOAL_RIGHT;
+    else
+    {
+        current_state_ = DRIVE_TO_GOAL;
+    }
+
+    if (density_ > max_density_)
+        max_density_ = density_;
+    
+    previous_density_ = density_;
+}
+
+
+void FSM::FIND_GOAL_AVOID_WALL_LEFT_logic()
+{
+    if (fabs(prev_robot_pose_ - robot_pose_) >= Distance::ESCAPE_RANGE_90)
+        current_state_ = DRIVE_TO_GOAL;
+        return;
+}
+
+
+void FSM::FIND_GOAL_AVOID_WALL_RIGHT_logic()
+{
+    if (fabs(prev_robot_pose_ - robot_pose_) >= Distance::ESCAPE_RANGE_90)
+        current_state_ = DRIVE_TO_GOAL;
+        return;
+}
+
+
+void FSM::DRIVE_TO_GOAL_logic()
+{   
+
+    // check that we don't hit into anything
+    if (temp_scan_data_[LEFT] < Distance::CHECK_SIDE_DIST)
+    {
+        prev_robot_pose_ = robot_pose_;
+        prev_scan_data_ = temp_scan_data_;
+        current_state_ = FIND_GOAL_AVOID_WALL_RIGHT;
+        return;
+    }
+    else if (temp_scan_data_[RIGHT] < Distance::CHECK_SIDE_DIST)
+    {
+        prev_robot_pose_ = robot_pose_;
+        prev_scan_data_ = temp_scan_data_;
+        current_state_ = FIND_GOAL_AVOID_WALL_LEFT;
+        return;
+    }
+    
+    // check if we've headed in the wrong direction
+    // if we've reached our destination then stop
+    if(density_ > GoalTracking::GOAL_FOUND)
+    {
+        current_state_ = STOP;
+    }
+    else if(density_ < previous_density_)
+    {
+        current_state_ = DETECTED_GOAL;
+    }
+    
+
 }
 
 #ifdef FSM_MAIN
