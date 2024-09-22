@@ -31,6 +31,10 @@ enum States {
     TB3_LEFT_TURN_90_DEG,
     TB3_SLOW_FORWARD,
 
+    // switching wall follow states
+    DRIVE_TO_NEXT_WALL,
+
+    // end states
     STOP,
     DANCE
 
@@ -43,10 +47,6 @@ enum CameraSettingsColors {
   AMOUNT_OF_COLOURS
 };
 
-enum WallFollowChoice {
-    LEFT_WALL = 0,
-    RIGHT_WALL
-};
 
 // Constants for LIDAR ANGLE DETECTIONS
 namespace LidarAngles {
