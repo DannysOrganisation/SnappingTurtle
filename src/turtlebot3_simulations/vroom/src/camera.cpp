@@ -9,7 +9,7 @@ By James Hocking
 */
 
 
-#include "CameraReader.hpp"
+#include "camera.hpp"
 
 
 // constructor for the CameraReader class
@@ -50,6 +50,7 @@ void CameraReader::camera_callback(const sensor_msgs::msg::Image::SharedPtr msg)
     // Start and end of Mask
     int starting_index = static_cast<int>(0.4 * width);
     int end_index = static_cast<int>(0.6 * width);
+    int valid_rows = static_cast<int>(0.6 * height);
 
     // Initialize color counters
     float amount_of_r = 0;
@@ -58,21 +59,22 @@ void CameraReader::camera_callback(const sensor_msgs::msg::Image::SharedPtr msg)
 
     // Initialised center green
     float amount_of_green_center = 0;
-    float amount_of_pixels_center = (end_index - starting_index) * height;
+    float amount_of_pixels_center = (end_index - starting_index) * valid_rows * AMOUNT_OF_COLOURS;
 
     // iterate through each row
     for (int row = 0; row < height; row++){
         // and then each pixel in that row
         for (int column = 0; column < width; column++){
-            uint8_t r = data[column + RED_INDEX_ADJUSTMENT];       
-            uint8_t g = data[column + GREEN_INDEX_ADJUSTMENT];   
-            uint8_t b = data[column + BLUE_INDEX_ADJUSTMENT];
+            int actual_index = row * (width * AMOUNT_OF_COLOURS)  + column * AMOUNT_OF_COLOURS;
+            uint8_t r = data[actual_index + RED_INDEX_ADJUSTMENT];       
+            uint8_t g = data[actual_index + GREEN_INDEX_ADJUSTMENT];   
+            uint8_t b = data[actual_index + BLUE_INDEX_ADJUSTMENT];
 
             amount_of_r += r;
             amount_of_g += g;
             amount_of_b += b;
 
-            if (column >= starting_index && column <= starting_index) {
+            if (column >= starting_index && column <= starting_index && row < valid_rows) {
                 amount_of_green_center += g;
             }
         }
@@ -85,14 +87,15 @@ void CameraReader::camera_callback(const sensor_msgs::msg::Image::SharedPtr msg)
     last_g_density_ = 100.0f * amount_of_g / total_amount_of_pixels;
     last_b_density_ = 100.0f * amount_of_b / total_amount_of_pixels;
 
-    // publish the density of the green
-    std_msgs::msg::Float32 density_msg;
-    density_msg.data = last_g_density_;  // Assign float value to the message
-    state_pub_->publish(density_msg);
-
     // calculate center amount of green
     float center_percent_of_green = 100.0f * amount_of_green_center / amount_of_pixels_center;
     bool is_looking_at_goal = center_percent_of_green > ColorThresholds::GREEN_CENTER_THESHOLD;
+
+    // publish the density of the green
+    std_msgs::msg::Float32 density_msg;
+    density_msg.data = center_percent_of_green;  // Assign float value to the message
+    state_pub_->publish(density_msg);
+
 
     // publish if looking at the green thing
     std_msgs::msg::Bool center_density_message;
