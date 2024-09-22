@@ -23,7 +23,7 @@ def generate_launch_description():
     use_sim_time = LaunchConfiguration('use_sim_time', default='true')
 
     # Select maze number
-    dict_of_options = {"Enclosed-Maze": "Closed-Maze", "Floating":"Floating"}
+    dict_of_options = {"Enclosed-Maze": "Enclosed", "Floating":"Floating"}
     maze_num = input(f"What Practice Maze number do you want to try? (Options: {', '.join(list(dict_of_options.keys()))}): ")
     if maze_num in list(dict_of_options.keys()):
         maze_name = dict_of_options[maze_num]
@@ -68,7 +68,7 @@ def generate_launch_description():
     )
 
     # Get the maze position
-    maze_positions = {"Enclosed-Maze": ["4", "1", "0.0"], "Floating":["3.9", "1.5", "0.0"]}
+    maze_positions = {"Enclosed-Maze": ["2", "5", "0.0"], "Floating":["3.9", "1.5", "0.0"]} # ["4", "1", "0.0"]
     curr_maze_pos = maze_positions[maze_num]
 
     # Get the robot position

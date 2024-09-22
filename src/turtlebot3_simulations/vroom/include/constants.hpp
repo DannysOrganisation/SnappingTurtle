@@ -87,4 +87,8 @@ namespace GoalTracking
     constexpr double GOAL_FOUND = 55;
 }
 
+namespace ColorThresholds {
+    constexpr double GREEN_CENTER_THESHOLD = 40;
+}
+
 #endif
