@@ -182,18 +182,10 @@ void FSM::update_state()
         
         case TB3_RIGHT_TURN:
             // RCLCPP_INFO(this->get_logger(), "Turning right. old_pose %f current pose %f", prev_robot_pose_, robot_pose_);
-            
             // stay in rotate state until we get to a better position
             if (fabs(prev_robot_pose_ - robot_pose_) >= Distance::ESCAPE_RANGE)
             {
                 current_state_ = GET_TB3_DIRECTION;
-                // RCLCPP_INFO(this->get_logger(), "Current difference %f", fabs(prev_robot_pose_ - robot_pose_));
-                // if (fabs(prev_robot_pose_ - robot_pose_) <= Distance::CHECK_ANGLE_WRAP) {
-                //     current_state_ = GET_TB3_DIRECTION;
-                // }
-                // else {
-                //     prev_robot_pose_ += 360 * DEG2RAD;
-                // }
             }
             break;
         
@@ -203,12 +195,6 @@ void FSM::update_state()
             if (fabs(prev_robot_pose_ - robot_pose_) >= Distance::ESCAPE_RANGE)
             {
                 current_state_ = GET_TB3_DIRECTION;
-                // if (fabs(prev_robot_pose_ - robot_pose_) >= Distance::CHECK_ANGLE_WRAP) {
-                //     prev_robot_pose_ -= 360 * DEG2RAD;
-                // }
-                // else {
-                //     current_state_ = GET_TB3_DIRECTION;
-                // }
             }
             break;
         

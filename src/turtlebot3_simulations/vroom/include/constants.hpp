@@ -68,7 +68,7 @@ namespace Distance
     constexpr double NO_WALL_DIST = 0.57;
     constexpr double CHECK_FORWARD_DIST = 0.4;
     constexpr double CHECK_SIDE_DIST = 0.4;
-    constexpr double ESCAPE_RANGE = 2 * DEG2RAD;
+    constexpr double ESCAPE_RANGE = 1 * DEG2RAD;
     constexpr double ESCAPE_RANGE_90 = 90 * DEG2RAD;
     constexpr double MAX_DISTANCE = 4.0;
     constexpr double CHECK_ANGLE_WRAP = 180.0 * DEG2RAD;
