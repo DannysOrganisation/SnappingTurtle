@@ -16,6 +16,7 @@ James Hocking, 2024
 #include <rclcpp/rclcpp.hpp>
 #include <sensor_msgs/msg/image.hpp>
 #include "std_msgs/msg/float32.hpp"
+#include "std_msgs/msg/bool.hpp"
 #include <iostream>
 #include "constants.hpp"
 
@@ -45,8 +46,11 @@ class CameraReader : public rclcpp::Node {
         // Callback for the camera
         void camera_callback(const sensor_msgs::msg::Image::SharedPtr msg);        
 
-        // Publisher of the green density
+        // Publisher of the green density for finishing
         rclcpp::Publisher<std_msgs::msg::Float32>::SharedPtr state_pub_;
+
+        // Publisher of only the center green density for tracking
+        rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr center_green_density_pub_;
 };
 
 #endif  

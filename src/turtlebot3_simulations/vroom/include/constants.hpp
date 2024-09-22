@@ -67,4 +67,8 @@ enum CameraSettingsColors {
   AMOUNT_OF_COLOURS
 };
 
+namespace ColorThresholds {
+    constexpr double GREEN_CENTER_THESHOLD = 50;
+}
+
 #endif
