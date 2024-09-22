@@ -81,8 +81,7 @@ namespace MotorControl
 
 namespace GoalTracking
 {
-    constexpr double GOAL_DETECT_LOWER_THRESHOLD = 40;
-    constexpr double GOAL_DETECT_THRESHOLD = 50;
+    constexpr double GOAL_DETECT_LOWER_THRESHOLD = 35;
     constexpr double GOAL_FOUND = 80;
 }
 
