@@ -134,11 +134,13 @@ void FSM::update_state()
             if(locate_flag_ && fabs(robot_pose_ - start_pose_) < 1e-1)
                 current_state_ = TURN_TO_WALL;
             
-            // as we rotate check to see if we've found a closer wall yet
-            if(temp_scan_data_[CENTER] < min_distance_)
+            // as we rotate check to see if we've found a closer wall yet handle bad data returning 0
+            if(temp_scan_data_[CENTER] < min_distance_ && temp_scan_data_[CENTER] > 1e-2)
             {
                 min_distance_ = temp_scan_data_[CENTER];
                 min_distance_pose_ = robot_pose_;
+                // RCLCPP_INFO(this->get_logger(), "CNew Min distance at %f. Distance is %f", min_distance_pose_, min_distance_);
+
             }
             break;
 
