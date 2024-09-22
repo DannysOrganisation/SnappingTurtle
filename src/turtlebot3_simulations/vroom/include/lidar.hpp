@@ -1,6 +1,9 @@
 #ifndef _LIDAR_HPP
 #define _LIDAR_HPP
 
+#include "constants.hpp"
+#include "std_msgs/msg/string.hpp"
+#include "std_msgs/msg/float32_multi_array.hpp"
 
 #include <chrono>
 #include <functional>
@@ -10,19 +13,12 @@
 #include <sensor_msgs/msg/laser_scan.hpp>
 #include <rclcpp/rclcpp.hpp>
 
-#include "constants.hpp"
-#include "std_msgs/msg/string.hpp"
-#include "std_msgs/msg/float32_multi_array.hpp"
-
-
 //--CLidar Interface-----------------------------------------------------------
 class Lidar : public rclcpp::Node{
+
     public:
         Lidar();
         ~Lidar();
-
-        // getter for the scan data
-        std::vector<double> get_scan_data();
 
     private:
         /**
@@ -44,18 +40,21 @@ class Lidar : public rclcpp::Node{
         rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr lidar_sub_;
         
         // scan_data_publisher
-        rclcpp::Publisher<std_msgs::msg::Float32MultiArray>::SharedPtr scan_data_pub_; 
+        rclcpp::Publisher<std_msgs::msg::Float32MultiArray>::SharedPtr\
+        scan_data_pub_; 
         rclcpp::TimerBase::SharedPtr update_timer_;
 
         //store the current and previous LiDar scan information
         std::vector<double> scan_data_;
         std::vector<double> prev_scan_data_;
 
-        uint16_t scan_angle[LidarAngles::NUM_ANGLES] = {LidarAngles::CENTER_ANGLE,
-                                                        LidarAngles::LEFT_ANGLE,
-                                                        LidarAngles::RIGHT_ANGLE,
-                                                        LidarAngles::HARD_LEFT_ANGLE,
-                                                        LidarAngles::HARD_RIGHT_ANGLE};
+        // A list of lidar angles that should be scanned
+        uint16_t scan_angle[LidarAngles::NUM_ANGLES] =
+        {LidarAngles::CENTER_ANGLE,
+        LidarAngles::LEFT_ANGLE,
+        LidarAngles::RIGHT_ANGLE,
+        LidarAngles::HARD_LEFT_ANGLE,
+        LidarAngles::HARD_RIGHT_ANGLE};
 
 };
 #endif

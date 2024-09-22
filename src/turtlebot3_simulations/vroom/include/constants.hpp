@@ -31,12 +31,9 @@ enum States {
     TB3_LEFT_TURN_90_DEG,
     TB3_SLOW_FORWARD,
 
-    // switching wall follow states
-    DRIVE_TO_NEXT_WALL,
-
     // end states
     STOP,
-    DANCE
+    DANCE   // no longer being used :(
 
 };
 
@@ -77,6 +74,8 @@ namespace Distance
 
 namespace MotorControl
 {
+    constexpr double SLOW_SCALING = 0.5;
+    constexpr double SPEED_SCALING = 1.5;
     constexpr double LINEAR_VELOCITY = 0.3;
     constexpr double ANGULAR_VELOCITY = 0.2;
     constexpr double TIME_FOR_HALF_ROTATION = (M_PI/ANGULAR_VELOCITY);
