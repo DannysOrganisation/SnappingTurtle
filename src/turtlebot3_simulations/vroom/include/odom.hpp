@@ -55,10 +55,6 @@ class Odom : public rclcpp::Node
 
         // member variable to store the current yaw
         double robot_pose_;
-        rclcpp::Publisher<visualization_msgs::msg::Marker>::SharedPtr marker_pub_;
-
-        //marker
-        visualization_msgs::msg::Marker marker;
         
         // member variable to store the path for later viewing
         nav_msgs::msg::Path path_;

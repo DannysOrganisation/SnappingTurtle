@@ -35,29 +35,6 @@ Odom::Odom() : Node("Odometry_Node")
     // create the timer that will cotrol how often the state gets published
     update_timer_ = this->create_wall_timer(20ms, std::bind(&Odom::update_pose, this));
 
-    // initialie marker publisher
-    marker_pub_ = this->create_publisher<visualization_msgs::msg::Marker>("my_marker", 10);
-    update_timer_ = this->create_wall_timer(20ms, std::bind(&Odom::update_marker, this));
-
-    //initialise marker
-    
-    // Set the frame ID and timestamp.  See the TF tutorials for information on these.
-    marker.header.frame_id = "/mantis_position";
-    marker.header.stamp = this->get_clock().get()->now();
-    marker.action = visualization_msgs::msg::Marker::ADD;
-    marker.type = visualization_msgs::msg::Marker::CUBE;
-    marker.id = 0;
-    marker.scale.x = 2;
-    marker.scale.y = 2;
-    marker.scale.z = 2;
-    marker.color.r = 0.0f;
-    marker.color.g = 1.0f;
-    marker.color.b = 0.0f;
-    marker.color.a = 1.0f;
-    marker.lifetime = rclcpp::Duration::max();
-
-
-
     // display successful creation message
     RCLCPP_INFO(this->get_logger(), "Odometry_Node has been successfully initialised");
 }
