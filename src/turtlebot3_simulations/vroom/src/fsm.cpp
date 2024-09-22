@@ -12,7 +12,6 @@ using namespace std::chrono_literals;
 // FSM::FSM(): Node("fsm_node"), current_state_(LOCATE_WALL)
 FSM::FSM(): Node("fsm_node"), current_state_(LOCATE_WALL)
 {
-    RCLCPP_INFO(this->get_logger(), "Wall to Follow: %d", wall_choice_);
     // set default values for everything
     scan_data_.resize(LidarAngles::NUM_ANGLES, 0.0);
     prev_scan_data_.resize(LidarAngles::NUM_ANGLES, 0.0);

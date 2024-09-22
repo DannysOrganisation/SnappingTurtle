@@ -75,7 +75,7 @@ void Motordrive::state_callback(const std_msgs::msg::Int32 msg){
         //added default state to drive forward... probably not the best option
         //I think a better option would be to come to a stop? not sure tbh
         default:
-            stop();
+            drive_forward();
             break;
 
     }
