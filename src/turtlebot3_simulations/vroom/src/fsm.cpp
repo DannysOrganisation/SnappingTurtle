@@ -144,7 +144,7 @@ void FSM::update_state()
     //     current_state_ = DETECTED_GOAL;
     //     return;
     // }
-    if(density_ > GoalTracking::GOAL_FOUND && prev_scan_data[CENTER] < 1)
+    if(density_ > GoalTracking::GOAL_FOUND && prev_scan_data_[CENTER] < 1)
     {
         current_state_ = STOP;
         return;
