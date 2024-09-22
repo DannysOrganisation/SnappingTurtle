@@ -56,7 +56,8 @@ namespace Distance
 namespace MotorControl
 {
     constexpr double LINEAR_VELOCITY = 0.3;
-    constexpr double ANGULAR_VELOCITY = 0.4;
+    constexpr double ANGULAR_VELOCITY = 0.2;
+    constexpr double TIME_FOR_ONE_ROTATION = (M_PI/ANGULAR_VELOCITY);
 }
 
 enum CameraSettingsColors {

@@ -124,13 +124,14 @@ void FSM::update_state()
             // check if we're back at the start position
             time_diff = ros_clk.now().seconds() - current_time.seconds() ;
 
-            if(time_diff > 16.0)
+            if(time_diff > MotorControl::TIME_FOR_ONE_ROTATION)
                 locate_flag_ = true;
                 // RCLCPP_INFO(this->get_logger(), "Time difference is %f", current_time.seconds() - ros_clk.now().seconds());
                 // RCLCPP_INFO(this->get_logger(), "Locate flag has been reset");
 
 
-            if(locate_flag_ && fabs(robot_pose_ - start_pose_) < 0.1)
+            // Check that we are back to the starting position (we've done a full rotation)
+            if(locate_flag_ && fabs(robot_pose_ - start_pose_) < 1e-1)
                 current_state_ = TURN_TO_WALL;
             
             // as we rotate check to see if we've found a closer wall yet
@@ -142,8 +143,8 @@ void FSM::update_state()
             break;
 
         case TURN_TO_WALL:
-            RCLCPP_INFO(this->get_logger(), "Closest wall found. Turning towards it.");
-            if(fabs(robot_pose_ - min_distance_pose_) == 0)
+            RCLCPP_INFO(this->get_logger(), "Closest wall found. Turning towards it. target_pose %f current pose %f", min_distance_pose_, robot_pose_);
+            if(fabs(robot_pose_ - min_distance_pose_) < 5e-3)
                 current_state_ = TB3_DRIVE_FORWARD;
             break;
 
