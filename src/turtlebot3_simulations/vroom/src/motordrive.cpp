@@ -108,7 +108,7 @@ void Motordrive::turn_hard_left(){
 }
 
 void Motordrive::turn_hard_right(){
-    update_cmd_vel(0.1*MotorControl::LINEAR_VELOCITY,-1*MotorControl::ANGULAR_VELOCITY);
+    update_cmd_vel(0.0, -1*MotorControl::ANGULAR_VELOCITY);
 }
 
 void Motordrive::drive_forward(){

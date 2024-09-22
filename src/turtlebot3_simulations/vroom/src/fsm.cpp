@@ -212,9 +212,22 @@ void FSM::update_state()
             RCLCPP_INFO(this->get_logger(), "Turning left. old_pose %f current pose %f", prev_robot_pose_, robot_pose_);
             if (fabs(prev_robot_pose_ - robot_pose_) >= Distance::ESCAPE_RANGE_90)
             {
-                // current_state_ = GET_TB3_DIRECTION;
                 if (fabs(prev_robot_pose_ - robot_pose_) >= Distance::CHECK_ANGLE_WRAP) {
                     prev_robot_pose_ -= 360 * DEG2RAD;
+                }
+                else {
+                    current_state_ = GET_TB3_DIRECTION;
+                }
+            }
+            break;
+
+        case TB3_RIGHT_TURN_90_DEG:
+            RCLCPP_INFO(this->get_logger(), "Turning left. old_pose %f current pose %f", prev_robot_pose_, robot_pose_);
+            if (fabs(prev_robot_pose_ - robot_pose_) >= Distance::ESCAPE_RANGE_90)
+            {
+                current_state_ = GET_TB3_DIRECTION;
+                if (fabs(prev_robot_pose_ - robot_pose_) >= Distance::CHECK_ANGLE_WRAP) {
+                    prev_robot_pose_ += 360 * DEG2RAD;
                 }
                 else {
                     current_state_ = GET_TB3_DIRECTION;
@@ -275,10 +288,10 @@ void FSM::GET_TB3_DIRECTION_logic()
     }
 
     // if there is something in front of the robot then turn right
-    if (temp_scan_data_[CENTER] < Distance::CHECK_FORWARD_DIST) {
+    else if (temp_scan_data_[CENTER] < Distance::CHECK_FORWARD_DIST) {
         prev_scan_data_ = temp_scan_data_;
         prev_robot_pose_ = robot_pose_;
-        current_state_ = TB3_RIGHT_TURN;
+        current_state_ = TB3_RIGHT_TURN_90_DEG;
     }
 }
 
