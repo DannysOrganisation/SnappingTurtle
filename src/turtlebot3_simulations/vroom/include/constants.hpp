@@ -31,13 +31,6 @@ enum States {
     TB3_LEFT_TURN_90_DEG,
     TB3_SLOW_FORWARD,
 
-    // goal detection states
-    DETECTED_GOAL,
-    FIND_GOAL_RIGHT,
-    FIND_GOAL_LEFT,
-    FIND_GOAL_AVOID_WALL_LEFT,
-    FIND_GOAL_AVOID_WALL_RIGHT,
-    DRIVE_TO_GOAL,
     STOP,
     DANCE
 

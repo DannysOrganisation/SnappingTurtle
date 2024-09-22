@@ -127,13 +127,7 @@ void FSM::update_state()
     // create a temporary variable that won't change during processing
     temp_scan_data_ = scan_data_;
 
-    // determine if we enter the goal seeking states
-    // if(density_ > GoalTracking::GOAL_DETECT_LOWER_THRESHOLD && !(goal_detected_))
-    // {
-    //     goal_detected_ = true; 
-    //     current_state_ = DETECTED_GOAL;
-    //     return;
-    // }
+
     if(density_ > GoalTracking::GOAL_FOUND && prev_scan_data_[CENTER] < 0.5)
     {
         current_state_ = STOP;
@@ -218,32 +212,6 @@ void FSM::update_state()
             // go straight to analysing direction after publishing the slow forward
             current_state_ = GET_TB3_DIRECTION;
             break;
-
-        case DETECTED_GOAL:
-            DETECTED_GOAL_logic();
-            break;
-        
-        case FIND_GOAL_RIGHT:
-            FIND_GOAL_RIGHT_logic();
-            break; 
-        
-        case FIND_GOAL_LEFT: 
-            FIND_GOAL_LEFT_logic();
-            break;
-
-        case FIND_GOAL_AVOID_WALL_LEFT:
-            FIND_GOAL_AVOID_WALL_LEFT_logic();
-            break;
-
-        case FIND_GOAL_AVOID_WALL_RIGHT: 
-            FIND_GOAL_AVOID_WALL_RIGHT_logic();
-            break;
-        
-        case DRIVE_TO_GOAL: 
-            DRIVE_TO_GOAL_logic();
-            break;
-
-
    }
 }
 
@@ -367,98 +335,6 @@ void FSM::LOCATE_WALL_logic()
     current_time = ros_clk.now();
 }
 
-void FSM::DETECTED_GOAL_logic()
-{
-    previous_density_ = density_;
-    current_state_ = FIND_GOAL_RIGHT;
-}
-
-void FSM::FIND_GOAL_RIGHT_logic()
-{   
-
-    // check if we're turning in the wrong direction
-    if(density_ < previous_density_)
-        current_state_ = FIND_GOAL_LEFT;
-    else
-    {
-        current_state_ = DRIVE_TO_GOAL;
-    }
-
-    if (density_ > max_density_)
-        max_density_ = density_;
-
-    previous_density_ = density_;
-    
-}
-
-
-void FSM::FIND_GOAL_LEFT_logic()
-{
-
-
-    // check if we're turning in the wrong direction
-    if(density_ < previous_density_)
-        current_state_ = FIND_GOAL_RIGHT;
-    else
-    {
-        current_state_ = DRIVE_TO_GOAL;
-    }
-
-    if (density_ > max_density_)
-        max_density_ = density_;
-    
-    previous_density_ = density_;
-}
-
-
-void FSM::FIND_GOAL_AVOID_WALL_LEFT_logic()
-{
-    if (fabs(prev_robot_pose_ - robot_pose_) >= Distance::ESCAPE_RANGE_90)
-        current_state_ = DRIVE_TO_GOAL;
-        return;
-}
-
-
-void FSM::FIND_GOAL_AVOID_WALL_RIGHT_logic()
-{
-    if (fabs(prev_robot_pose_ - robot_pose_) >= Distance::ESCAPE_RANGE_90)
-        current_state_ = DRIVE_TO_GOAL;
-        return;
-}
-
-
-void FSM::DRIVE_TO_GOAL_logic()
-{   
-
-    // check that we don't hit into anything
-    if (temp_scan_data_[LEFT] < Distance::CHECK_SIDE_DIST)
-    {
-        prev_robot_pose_ = robot_pose_;
-        prev_scan_data_ = temp_scan_data_;
-        current_state_ = FIND_GOAL_AVOID_WALL_RIGHT;
-        return;
-    }
-    else if (temp_scan_data_[RIGHT] < Distance::CHECK_SIDE_DIST)
-    {
-        prev_robot_pose_ = robot_pose_;
-        prev_scan_data_ = temp_scan_data_;
-        current_state_ = FIND_GOAL_AVOID_WALL_LEFT;
-        return;
-    }
-    
-    // check if we've headed in the wrong direction
-    // if we've reached our destination then dance!
-    if(density_ > GoalTracking::GOAL_FOUND)
-    {
-        current_state_ = DANCE;
-    }
-    else if(density_ < previous_density_)
-    {
-        current_state_ = DETECTED_GOAL;
-    }
-    
-
-}
 
 #ifdef FSM_MAIN
 int main(int argc, char** argv)
