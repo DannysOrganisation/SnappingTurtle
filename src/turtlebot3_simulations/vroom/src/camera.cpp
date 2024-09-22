@@ -93,7 +93,7 @@ void CameraReader::camera_callback(const sensor_msgs::msg::Image::SharedPtr msg)
 
     // publish the density of the green
     std_msgs::msg::Float32 density_msg;
-    density_msg.data = center_percent_of_green;  // Assign float value to the message
+    density_msg.data = last_g_density_;  // Assign float value to the message
     state_pub_->publish(density_msg);
 
 

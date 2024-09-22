@@ -125,13 +125,13 @@ void FSM::update_state()
     temp_scan_data_ = scan_data_;
 
     // determine if we enter the goal seeking states
-    if(density_ > GoalTracking::GOAL_DETECT_LOWER_THRESHOLD && !(goal_detected_))
-    {
-        goal_detected_ = true; 
-        current_state_ = DETECTED_GOAL;
-        return;
-    }
-    else if(density_ > GoalTracking::GOAL_FOUND)
+    // if(density_ > GoalTracking::GOAL_DETECT_LOWER_THRESHOLD && !(goal_detected_))
+    // {
+    //     goal_detected_ = true; 
+    //     current_state_ = DETECTED_GOAL;
+    //     return;
+    // }
+    if(density_ > GoalTracking::GOAL_FOUND && prev_scan_data[CENTER] < 1)
     {
         current_state_ = STOP;
         return;
