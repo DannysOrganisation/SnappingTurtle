@@ -94,25 +94,23 @@ void FSM::update_state()
     auto msg = std_msgs::msg::Int32();
     msg.data = current_state_;
 
-    std::map<int,std::string> m;
-    m.insert( std::pair<int, std::string>(LOCATE_WALL, "LOCATE_WALL") );
-    m.insert( std::pair<int, std::string>(ROTATE_IN_PLACE, "ROTATE_IN_PLACE") );
-    m.insert( std::pair<int, std::string>(TURN_TO_WALL, "TURN_TO_WALL") );
-    m.insert( std::pair<int, std::string>(GET_TB3_DIRECTION, "GET_TB3_DIRECTION") );
-    m.insert( std::pair<int, std::string>(TB3_DRIVE_FORWARD, "TB3_DRIVE_FORWARD") );
-    m.insert( std::pair<int, std::string>(TB3_RIGHT_TURN, "TB3_RIGHT_TURN") );
-    m.insert( std::pair<int, std::string>(TB3_RIGHT_TURN_90_DEG, "TB3_RIGHT_TURN_90_DEG") );
-    m.insert( std::pair<int, std::string>(TB3_LEFT_TURN, "TB3_LEFT_TURN") );
-    m.insert( std::pair<int, std::string>(TB3_LEFT_TURN_90_DEG, "TB3_LEFT_TURN_90_DEG") );
-    m.insert( std::pair<int, std::string>(TB3_SLOW_FORWARD, "TB3_SLOW_FORWARD") );
+    // Debugging Print Statements for current state
+    // std::map<int,std::string> m;
+    // m.insert( std::pair<int, std::string>(LOCATE_WALL, "LOCATE_WALL") );
+    // m.insert( std::pair<int, std::string>(ROTATE_IN_PLACE, "ROTATE_IN_PLACE") );
+    // m.insert( std::pair<int, std::string>(TURN_TO_WALL, "TURN_TO_WALL") );
+    // m.insert( std::pair<int, std::string>(GET_TB3_DIRECTION, "GET_TB3_DIRECTION") );
+    // m.insert( std::pair<int, std::string>(TB3_DRIVE_FORWARD, "TB3_DRIVE_FORWARD") );
+    // m.insert( std::pair<int, std::string>(TB3_RIGHT_TURN, "TB3_RIGHT_TURN") );
+    // m.insert( std::pair<int, std::string>(TB3_RIGHT_TURN_90_DEG, "TB3_RIGHT_TURN_90_DEG") );
+    // m.insert( std::pair<int, std::string>(TB3_LEFT_TURN, "TB3_LEFT_TURN") );
+    // m.insert( std::pair<int, std::string>(TB3_LEFT_TURN_90_DEG, "TB3_LEFT_TURN_90_DEG") );
+    // m.insert( std::pair<int, std::string>(TB3_SLOW_FORWARD, "TB3_SLOW_FORWARD") );
 
-    RCLCPP_INFO(this->get_logger(), ("Current State: " + m.at(current_state_)).c_str());
+    // RCLCPP_INFO(this->get_logger(), ("Current State: " + m.at(current_state_)).c_str());
 
     // Publish the message
     state_pub_->publish(msg);
-
-    // Log the current state
-    // RCLCPP_INFO(this->get_logger(), "Published state: %d", msg.data);
 
     // create a temporary variable that won't change during processing
     temp_scan_data_ = scan_data_;
@@ -124,7 +122,7 @@ void FSM::update_state()
    {
 
         case LOCATE_WALL:
-            RCLCPP_INFO(this->get_logger(), "Attempting to find the closest wall");
+            // RCLCPP_INFO(this->get_logger(), "Attempting to find the closest wall");
             start_pose_ = robot_pose_;
             min_distance_ = Distance::MAX_DISTANCE;
             current_state_ = ROTATE_IN_PLACE;
@@ -158,7 +156,7 @@ void FSM::update_state()
             break;
 
         case TURN_TO_WALL:
-            RCLCPP_INFO(this->get_logger(), "Closest wall found. Turning towards it. target_pose %f current pose %f", min_distance_pose_, robot_pose_);
+            // RCLCPP_INFO(this->get_logger(), "Closest wall found. Turning towards it. target_pose %f current pose %f", min_distance_pose_, robot_pose_);
             if(fabs(robot_pose_ - min_distance_pose_) < 5e-3)
                 current_state_ = TB3_DRIVE_FORWARD;
             break;
@@ -177,7 +175,7 @@ void FSM::update_state()
             break;
         
         case TB3_RIGHT_TURN:
-            RCLCPP_INFO(this->get_logger(), "Turning right. old_pose %f current pose %f", prev_robot_pose_, robot_pose_);
+            // RCLCPP_INFO(this->get_logger(), "Turning right. old_pose %f current pose %f", prev_robot_pose_, robot_pose_);
             
             // stay in rotate state until we get to a better position
             if (fabs(prev_robot_pose_ - robot_pose_) >= Distance::ESCAPE_RANGE)
@@ -194,7 +192,7 @@ void FSM::update_state()
             break;
         
         case TB3_LEFT_TURN:
-            RCLCPP_INFO(this->get_logger(), "Turning left. old_pose %f current pose %f", prev_robot_pose_, robot_pose_);
+            // RCLCPP_INFO(this->get_logger(), "Turning left. old_pose %f current pose %f", prev_robot_pose_, robot_pose_);
             // stay in rotate state until we get to a better position
             if (fabs(prev_robot_pose_ - robot_pose_) >= Distance::ESCAPE_RANGE)
             {
@@ -209,7 +207,7 @@ void FSM::update_state()
             break;
         
         case TB3_LEFT_TURN_90_DEG:
-            RCLCPP_INFO(this->get_logger(), "Turning left. old_pose %f current pose %f", prev_robot_pose_, robot_pose_);
+            // RCLCPP_INFO(this->get_logger(), "Turning left. old_pose %f current pose %f", prev_robot_pose_, robot_pose_);
             if (fabs(prev_robot_pose_ - robot_pose_) >= Distance::ESCAPE_RANGE_90)
             {
                 if (fabs(prev_robot_pose_ - robot_pose_) >= Distance::CHECK_ANGLE_WRAP) {
@@ -222,7 +220,7 @@ void FSM::update_state()
             break;
 
         case TB3_RIGHT_TURN_90_DEG:
-            RCLCPP_INFO(this->get_logger(), "Turning left. old_pose %f current pose %f", prev_robot_pose_, robot_pose_);
+            // RCLCPP_INFO(this->get_logger(), "Turning right. old_pose %f current pose %f", prev_robot_pose_, robot_pose_);
             if (fabs(prev_robot_pose_ - robot_pose_) >= Distance::ESCAPE_RANGE_90)
             {
                 current_state_ = GET_TB3_DIRECTION;
