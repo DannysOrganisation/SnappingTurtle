@@ -12,6 +12,7 @@ using namespace std::chrono_literals;
 // FSM::FSM(): Node("fsm_node"), current_state_(LOCATE_WALL)
 FSM::FSM(): Node("fsm_node"), current_state_(LOCATE_WALL)
 {
+    RCLCPP_INFO(this->get_logger(), "Wall to Follow: %d", wall_choice_);
     // set default values for everything
     scan_data_.resize(LidarAngles::NUM_ANGLES, 0.0);
     prev_scan_data_.resize(LidarAngles::NUM_ANGLES, 0.0);
@@ -216,7 +217,6 @@ void FSM::update_state()
             // RCLCPP_INFO(this->get_logger(), "Turning right. old_pose %f current pose %f", prev_robot_pose_, robot_pose_);
             if (fabs(prev_robot_pose_ - robot_pose_) >= Distance::ESCAPE_RANGE_90)
             {
-                current_state_ = GET_TB3_DIRECTION;
                 if (fabs(prev_robot_pose_ - robot_pose_) >= Distance::CHECK_ANGLE_WRAP) {
                     prev_robot_pose_ += 360 * DEG2RAD;
                 }
@@ -271,13 +271,23 @@ void FSM::GET_TB3_DIRECTION_logic()
         {
             prev_robot_pose_ = robot_pose_;
             prev_scan_data_ = temp_scan_data_;
-            current_state_ = TB3_RIGHT_TURN;
+            if (wall_choice_ == WallFollowChoice::LEFT_WALL){
+                current_state_ = TB3_RIGHT_TURN;
+            }
+            else if (wall_choice_ == WallFollowChoice::RIGHT_WALL){
+                current_state_ = TB3_LEFT_TURN;
+            }
         }
         else if (temp_scan_data_[RIGHT] < Distance::CHECK_SIDE_DIST)
         {
             prev_robot_pose_ = robot_pose_;
             prev_scan_data_ = temp_scan_data_;
-            current_state_ = TB3_LEFT_TURN;
+            if (wall_choice_ == WallFollowChoice::LEFT_WALL){
+                current_state_ = TB3_LEFT_TURN;
+            }
+            else if (wall_choice_ == WallFollowChoice::RIGHT_WALL){
+                current_state_ = TB3_RIGHT_TURN;
+            }
         }
         else if (temp_scan_data_[HARD_LEFT] > (Distance::NO_WALL_DIST) && prev_scan_data_[HARD_LEFT] <= Distance::NO_WALL_DIST)
         {
@@ -285,14 +295,30 @@ void FSM::GET_TB3_DIRECTION_logic()
             prev_scan_data_ = temp_scan_data_;
             current_state_ = TB3_LEFT_TURN_90_DEG;
         }
+        else if (temp_scan_data_[HARD_RIGHT] > (Distance::NO_WALL_DIST) && prev_scan_data_[HARD_RIGHT] <= Distance::NO_WALL_DIST)
+        {
+            prev_robot_pose_ = robot_pose_;
+            prev_scan_data_ = temp_scan_data_;
+            current_state_ = TB3_RIGHT_TURN_90_DEG;
+        }
         // if the wall on the left is getting too further away, turn towards it
-        else if (temp_scan_data_[LEFT] > prev_scan_data_[LEFT] && temp_scan_data_[LEFT] >  (1.3 * Distance::CHECK_SIDE_DIST) && (temp_scan_data_[LEFT] < 2* Distance::CHECK_SIDE_DIST)){
+        else if (wall_choice_ == WallFollowChoice::LEFT_WALL && temp_scan_data_[LEFT] > prev_scan_data_[LEFT] && temp_scan_data_[LEFT] >  (1.3 * Distance::CHECK_SIDE_DIST) && (temp_scan_data_[LEFT] < 2* Distance::CHECK_SIDE_DIST)){
             prev_robot_pose_ = robot_pose_;
             prev_scan_data_ = temp_scan_data_;
             current_state_ = TB3_LEFT_TURN;
         }
+        else if (wall_choice_ == WallFollowChoice::RIGHT_WALL && temp_scan_data_[RIGHT] > prev_scan_data_[RIGHT] && temp_scan_data_[RIGHT] >  (1.3 * Distance::CHECK_SIDE_DIST) && (temp_scan_data_[RIGHT] < 2* Distance::CHECK_SIDE_DIST)){
+            prev_robot_pose_ = robot_pose_;
+            prev_scan_data_ = temp_scan_data_;
+            current_state_ = TB3_RIGHT_TURN;
+        }
         //if a left hand corner is approaching
-        else if (temp_scan_data_[LEFT] > 1.5 * Distance::CHECK_SIDE_DIST && prev_scan_data_[LEFT] > 1.5 * Distance::CHECK_SIDE_DIST){
+        else if (wall_choice_ == WallFollowChoice::LEFT_WALL && temp_scan_data_[LEFT] > 1.5 * Distance::CHECK_SIDE_DIST && prev_scan_data_[LEFT] > 1.5 * Distance::CHECK_SIDE_DIST){
+            prev_robot_pose_ = robot_pose_;
+            prev_scan_data_ = temp_scan_data_;
+            current_state_ = TB3_SLOW_FORWARD;
+        }
+        else if (wall_choice_ == WallFollowChoice::RIGHT_WALL && temp_scan_data_[RIGHT] > 1.5 * Distance::CHECK_SIDE_DIST && prev_scan_data_[RIGHT] > 1.5 * Distance::CHECK_SIDE_DIST){
             prev_robot_pose_ = robot_pose_;
             prev_scan_data_ = temp_scan_data_;
             current_state_ = TB3_SLOW_FORWARD;
@@ -305,7 +331,12 @@ void FSM::GET_TB3_DIRECTION_logic()
     }
 
     // if there is something in front of the robot then turn right
-    else if (temp_scan_data_[CENTER] < Distance::CHECK_FORWARD_DIST) {
+    else if (wall_choice_ == WallFollowChoice::LEFT_WALL && temp_scan_data_[CENTER] < Distance::CHECK_FORWARD_DIST) {
+        prev_scan_data_ = temp_scan_data_;
+        prev_robot_pose_ = robot_pose_;
+        current_state_ = TB3_RIGHT_TURN_90_DEG;
+    }
+    else if (wall_choice_ == WallFollowChoice::RIGHT_WALL && temp_scan_data_[CENTER] < Distance::CHECK_FORWARD_DIST) {
         prev_scan_data_ = temp_scan_data_;
         prev_robot_pose_ = robot_pose_;
         current_state_ = TB3_RIGHT_TURN_90_DEG;

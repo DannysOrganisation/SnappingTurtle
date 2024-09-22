@@ -53,6 +53,8 @@ class FSM : public rclcpp::Node
         double min_distance_pose_;
         double min_distance_;
         
+        // choice of wall to follow
+        WallFollowChoice wall_choice_;
 
         // track poses that need to be remembe
         double robot_pose_;

@@ -11,7 +11,8 @@ enum Directions {
     CENTER = 0,
     LEFT,
     RIGHT,
-    HARD_LEFT
+    HARD_LEFT,
+    HARD_RIGHT
 };
 
 enum States {
@@ -47,6 +48,11 @@ enum CameraSettingsColors {
   GREEN_INDEX_ADJUSTMENT,
   BLUE_INDEX_ADJUSTMENT,  
   AMOUNT_OF_COLOURS
+};
+
+enum WallFollowChoice {
+    LEFT_WALL = 0,
+    RIGHT_WALL
 };
 
 // Constants for LIDAR ANGLE DETECTIONS
