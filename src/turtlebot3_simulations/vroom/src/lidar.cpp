@@ -21,9 +21,9 @@ Lidar::Lidar() : Node ("tb3_LiDar")
 
 
     // initialise publisher
-    scan_data_pub_ = this->create_publisher<std_msgs::msg::Float64MultiArray>("lidar", STANDARD_BUFFER_SIZE);
+    scan_data_pub_ = this->create_publisher<std_msgs::msg::Float32MultiArray>("lidar", STANDARD_BUFFER_SIZE);
     // create the timer that will cotrol how often the state gets published
-    update_timer_ = this->create_wall_timer(10ms, std::bind(&Lidar::update_scan_data, this));
+    update_timer_ = this->create_wall_timer(20ms, std::bind(&Lidar::update_scan_data, this));
 
     RCLCPP_INFO(this->get_logger(), "Lidar_node has been successfully initialised");
 
@@ -31,7 +31,10 @@ Lidar::Lidar() : Node ("tb3_LiDar")
 }
 
 //--
-Lidar::~Lidar(){}
+Lidar::~Lidar()
+{
+    RCLCPP_INFO(this->get_logger(), "Lidar_node has been terminated");
+}
 
 //--
 void Lidar::scan_callback(const sensor_msgs::msg::LaserScan::SharedPtr msg){
@@ -52,7 +55,7 @@ void Lidar::scan_callback(const sensor_msgs::msg::LaserScan::SharedPtr msg){
 void Lidar::update_scan_data()
 {   
     // create the message and insert the scan data into it
-    auto message = std_msgs::msg::Float64MultiArray();
+    auto message = std_msgs::msg::Float32MultiArray();
     message.data.insert(message.data.end(), scan_data_.begin(), scan_data_.end());
 
     // publish the message

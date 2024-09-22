@@ -8,11 +8,26 @@ FSM CLASS IMPLEMENTATION
 
 using namespace std::chrono_literals;
 
-FSM::FSM(): Node("fsm_node"), current_state_(GET_TB3_DIRECTION)
+FSM::FSM(): Node("fsm_node"), current_state_(LOCATE_WALL)
 {
-    
+    // set default values for everything
+    scan_data_.resize(LidarAngles::NUM_ANGLES, 0.0);
+    prev_scan_data_.resize(LidarAngles::NUM_ANGLES, 0.0);
+    for(int i = 0; i < LidarAngles::NUM_ANGLES; i++)
+    {
+        prev_scan_data_[i] = Distance::MAX_DISTANCE;
+        scan_data_[i] = Distance::MAX_DISTANCE;
+    }    
+    start_pose_ = 0.0;
+    robot_pose_ = 0.0;
+    prev_robot_pose_ = 0.0;
+
+    // initialise the clock
+    rclcpp::Clock ros_clock(RCL_SYSTEM_TIME); 
+
+
     //create LiDar subscriber
-    scan_data_sub_ = this->create_subscription<std_msgs::msg::Float64MultiArray>(
+    scan_data_sub_ = this->create_subscription<std_msgs::msg::Float32MultiArray>(
         "lidar", /* subscribe to topic /lidar */ \
         rclcpp::SensorDataQoS(), /* use the qos number set by rclcpp */ \
         std::bind(                  
@@ -22,7 +37,7 @@ FSM::FSM(): Node("fsm_node"), current_state_(GET_TB3_DIRECTION)
         );
     
     // create robot pose subscriber
-    robot_pose_sub_ = this->create_subscription<std_msgs::msg::Float64>(
+    robot_pose_sub_ = this->create_subscription<std_msgs::msg::Float32>(
         "robotpose", /* subscribe to topic /lidar */ \
         rclcpp::SensorDataQoS(), /* use the qos number set by rclcpp */ \
         std::bind(                  
@@ -37,7 +52,7 @@ FSM::FSM(): Node("fsm_node"), current_state_(GET_TB3_DIRECTION)
 
     // create the timer that will cotrol how often the state gets published
     update_timer_ = this->create_wall_timer(
-            10ms, std::bind(&FSM::update_state, this));
+            30ms, std::bind(&FSM::update_state, this));
 
     // display successful creation message
     RCLCPP_INFO(this->get_logger(), "FSM_node has been successfully initialised");
@@ -48,17 +63,23 @@ FSM::~FSM()
     RCLCPP_INFO(this->get_logger(), "FSM node has been terminated");
 }
 
-void FSM::scan_data_callback(const std_msgs::msg::Float64MultiArray::SharedPtr msg)
+void FSM::scan_data_callback(const std_msgs::msg::Float32MultiArray::SharedPtr msg)
 {
-// Clear the existing data in scan_data_
+    if (msg->data.size() != LidarAngles::NUM_ANGLES) {
+        RCLCPP_ERROR(this->get_logger(), "Received unexpected scan data size");
+        return;
+    }
+
+    // Clear the existing data in scan_data_
     scan_data_.clear();
+    scan_data_.resize(LidarAngles::NUM_ANGLES, 0.0);
 
     // Copy the data from the message to scan_data_
-    scan_data_.insert(scan_data_.end(), msg->data.begin(), msg->data.end());
+    scan_data_.assign(msg->data.begin(), msg->data.end());
     return;
 }
 
-void FSM::robot_pose_callback(const std_msgs::msg::Float64::SharedPtr msg)
+void FSM::robot_pose_callback(const std_msgs::msg::Float32::SharedPtr msg)
 {
     robot_pose_ = msg->data;
     return;
@@ -78,31 +99,52 @@ void FSM::update_state()
     // Log the current state
     // RCLCPP_INFO(this->get_logger(), "Published state: %d", msg.data);
 
+    // create a temporary variable that won't change during processing
+    temp_scan_data_ = scan_data_;
 
-    /*
-    TO DO
-
-    WORK OUT THE NEXT STATE LOGIC AND PROCESS IT HERE
-    */
+    // create a variable for finding the wall
+    double time_diff;
 
    switch (current_state_)
    {
 
         case LOCATE_WALL:
-            
+            RCLCPP_INFO(this->get_logger(), "Attempting to find the closest wall");
             start_pose_ = robot_pose_;
+            min_distance_ = Distance::MAX_DISTANCE;
+            current_state_ = ROTATE_IN_PLACE;
+            locate_flag_ = false;
+
+            // set the timer
+            current_time = ros_clk.now();
             break;
 
         case ROTATE_IN_PLACE:
 
-            if(fabs(robot_pose_ - start_pose_ )< 0.01)
+            // check if we're back at the start position
+            time_diff = ros_clk.now().seconds() - current_time.seconds() ;
+
+            if(time_diff > 16.0)
+                locate_flag_ = true;
+                // RCLCPP_INFO(this->get_logger(), "Time difference is %f", current_time.seconds() - ros_clk.now().seconds());
+                // RCLCPP_INFO(this->get_logger(), "Locate flag has been reset");
+
+
+            if(locate_flag_ && fabs(robot_pose_ - start_pose_) < 0.1)
                 current_state_ = TURN_TO_WALL;
+            
+            // as we rotate check to see if we've found a closer wall yet
+            if(temp_scan_data_[CENTER] < min_distance_)
+            {
+                min_distance_ = temp_scan_data_[CENTER];
+                min_distance_pose_ = robot_pose_;
+            }
             break;
 
         case TURN_TO_WALL:
-            /*
-            STILL HAVE TO IMPLEMENT THIS
-            */
+            RCLCPP_INFO(this->get_logger(), "Closest wall found. Turning towards it.");
+            if(fabs(robot_pose_ - min_distance_pose_) == 0)
+                current_state_ = TB3_DRIVE_FORWARD;
             break;
 
         case GET_TB3_DIRECTION:
@@ -149,48 +191,48 @@ Next State Logic For Basic Direction Getting Function
 */
 void FSM::GET_TB3_DIRECTION_logic()
 {
-    if (scan_data_[CENTER] > Distance::CHECK_FORWARD_DIST)
+    if (temp_scan_data_[CENTER] > Distance::CHECK_FORWARD_DIST)
     {   
-        if (scan_data_[LEFT] < Distance::CHECK_SIDE_DIST)
+        if (temp_scan_data_[LEFT] < Distance::CHECK_SIDE_DIST)
         {
             prev_robot_pose_ = robot_pose_;
-            prev_scan_data_ = scan_data_;
+            prev_scan_data_ = temp_scan_data_;
             current_state_ = TB3_RIGHT_TURN;
         }
-        else if (scan_data_[RIGHT] < Distance::CHECK_SIDE_DIST)
+        else if (temp_scan_data_[RIGHT] < Distance::CHECK_SIDE_DIST)
         {
             prev_robot_pose_ = robot_pose_;
-            prev_scan_data_ = scan_data_;
+            prev_scan_data_ = temp_scan_data_;
             current_state_ = TB3_LEFT_TURN;
         }
-        else if (scan_data_[HARD_LEFT] > (Distance::NO_WALL_DIST) && prev_scan_data_[HARD_LEFT] <= Distance::NO_WALL_DIST)
+        else if (temp_scan_data_[HARD_LEFT] > (Distance::NO_WALL_DIST) && prev_scan_data_[HARD_LEFT] <= Distance::NO_WALL_DIST)
         {
             prev_robot_pose_ = robot_pose_;
-            prev_scan_data_ = scan_data_;
+            prev_scan_data_ = temp_scan_data_;
             current_state_ = TB3_LEFT_TURN_90_DEG;
         }
         // if the wall on the left is getting too further away, turn towards it
-        else if (scan_data_[LEFT] > prev_scan_data_[LEFT] && scan_data_[LEFT] >  (1.3 * Distance::CHECK_SIDE_DIST) && (scan_data_[LEFT] < 2* Distance::CHECK_SIDE_DIST)){
+        else if (temp_scan_data_[LEFT] > prev_scan_data_[LEFT] && temp_scan_data_[LEFT] >  (1.3 * Distance::CHECK_SIDE_DIST) && (temp_scan_data_[LEFT] < 2* Distance::CHECK_SIDE_DIST)){
         prev_robot_pose_ = robot_pose_;
-        prev_scan_data_ = scan_data_;
+        prev_scan_data_ = temp_scan_data_;
         current_state_ = TB3_LEFT_TURN;
         }
         //if a left hand corner is approaching
-        else if (scan_data_[LEFT] > 1.5 * Distance::CHECK_SIDE_DIST && prev_scan_data_[LEFT] > 1.5 * Distance::CHECK_SIDE_DIST){
+        else if (temp_scan_data_[LEFT] > 1.5 * Distance::CHECK_SIDE_DIST && prev_scan_data_[LEFT] > 1.5 * Distance::CHECK_SIDE_DIST){
             prev_robot_pose_ = robot_pose_;
-            prev_scan_data_ = scan_data_;
+            prev_scan_data_ = temp_scan_data_;
             current_state_ = TB3_SLOW_FORWARD;
         }
         // if we are not close to any walls then keep driving forward
         else {
-            prev_scan_data_ = scan_data_;
+            prev_scan_data_ = temp_scan_data_;
             current_state_ = TB3_DRIVE_FORWARD;
         }
     }
 
     // if there is something in front of the robot then turn right
-    if (scan_data_[CENTER] < Distance::CHECK_FORWARD_DIST) {
-        prev_scan_data_ = scan_data_;
+    if (temp_scan_data_[CENTER] < Distance::CHECK_FORWARD_DIST) {
+        prev_scan_data_ = temp_scan_data_;
         prev_robot_pose_ = robot_pose_;
         current_state_ = TB3_RIGHT_TURN;
     }

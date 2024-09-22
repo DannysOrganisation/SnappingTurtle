@@ -18,8 +18,9 @@ Motordrive::Motordrive()
     );
 }
 
-Motordrive::~Motordrive(){
-
+Motordrive::~Motordrive()
+{
+    RCLCPP_INFO(this->get_logger(), "Motor_drive node has been terminated");
 }
 
 void Motordrive::state_callback(const std_msgs::msg::Int32 msg){
@@ -29,6 +30,19 @@ void Motordrive::state_callback(const std_msgs::msg::Int32 msg){
 
     // determine which drive method to call
     switch (current_state_){
+
+        case LOCATE_WALL:
+            turn_right();
+            break;
+
+        case ROTATE_IN_PLACE:
+            turn_right();
+            break;
+
+        case TURN_TO_WALL:
+            turn_right();
+            break;
+
         case TB3_DRIVE_FORWARD:
             drive_forward();
             break;
@@ -93,6 +107,11 @@ void Motordrive::turn_hard_right(){
 
 void Motordrive::drive_forward(){
     update_cmd_vel(MotorControl::LINEAR_VELOCITY, 0.0);
+}
+
+void Motordrive::stop()
+{
+    update_cmd_vel(0.0, 0.0);
 }
 
 void Motordrive::slow_forward(){

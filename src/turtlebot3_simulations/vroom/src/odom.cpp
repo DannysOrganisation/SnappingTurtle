@@ -24,9 +24,9 @@ Odom::Odom() : Node("Odometry_Node")
         );
 
     //intialise publisher
-    odom_pub_ = this->create_publisher<std_msgs::msg::Float64>("robotpose", STANDARD_BUFFER_SIZE);
+    odom_pub_ = this->create_publisher<std_msgs::msg::Float32>("robotpose", STANDARD_BUFFER_SIZE);
     // create the timer that will cotrol how often the state gets published
-    update_timer_ = this->create_wall_timer(10ms, std::bind(&Odom::update_pose, this));
+    update_timer_ = this->create_wall_timer(20ms, std::bind(&Odom::update_pose, this));
 
     // display successful creation message
     RCLCPP_INFO(this->get_logger(), "Odometry_Node has been successfully initialised");
@@ -40,7 +40,7 @@ Odom::~Odom()
 
 void Odom::update_pose()
 {
-  auto msg = std_msgs::msg::Float64();
+  auto msg = std_msgs::msg::Float32();
   msg.data = robot_pose_;
   odom_pub_->publish(msg);
 }

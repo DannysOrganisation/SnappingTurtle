@@ -79,6 +79,12 @@ class Motordrive : public rclcpp::Node{
          */
         void slow_forward();
 
+
+        /*
+        Function stops the robot
+        */
+        void stop();
+
         //memory of the current state
         int current_state_;
 
