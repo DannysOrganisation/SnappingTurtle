@@ -85,6 +85,7 @@ class FSM : public rclcpp::Node
         void FIND_GOAL_RIGHT_logic();
         void FIND_GOAL_LEFT_logic();
 
-        void TURN_TO_GOAL_logic();
+        void FIND_GOAL_AVOID_WALL_LEFT_logic();
+        void FIND_GOAL_AVOID_WALL_RIGHT_logic();
         void DRIVE_TO_GOAL_logic();
 };

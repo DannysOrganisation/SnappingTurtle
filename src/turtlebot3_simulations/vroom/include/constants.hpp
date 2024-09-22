@@ -34,6 +34,8 @@ enum States {
     DETECTED_GOAL,
     FIND_GOAL_RIGHT,
     FIND_GOAL_LEFT,
+    FIND_GOAL_AVOID_WALL_LEFT,
+    FIND_GOAL_AVOID_WALL_RIGHT,
     DRIVE_TO_GOAL,
     STOP
 
@@ -82,7 +84,7 @@ namespace MotorControl
 namespace GoalTracking
 {
     constexpr double GOAL_DETECT_LOWER_THRESHOLD = 35;
-    constexpr double GOAL_FOUND = 80;
+    constexpr double GOAL_FOUND = 55;
 }
 
 #endif

@@ -131,6 +131,11 @@ void FSM::update_state()
         current_state_ = DETECTED_GOAL;
         return;
     }
+    else if(density_ > GoalTracking::GOAL_FOUND)
+    {
+        current_state_ = STOP;
+        return;
+    }
 
    switch (current_state_)
    {
@@ -146,7 +151,7 @@ void FSM::update_state()
         case TURN_TO_WALL:
             RCLCPP_INFO(this->get_logger(), "Closest wall found. Turning towards it. target_pose %f current pose %f", min_distance_pose_, robot_pose_);
             if(fabs(robot_pose_ - min_distance_pose_) < 5e-3)
-                current_state_ = TB3_DRIVE_FORWARD;
+                current_state_ = GET_TB3_DIRECTION;
             break;
 
         case GET_TB3_DIRECTION:
@@ -195,6 +200,14 @@ void FSM::update_state()
         
         case FIND_GOAL_LEFT: 
             FIND_GOAL_LEFT_logic();
+            break;
+
+        case FIND_GOAL_AVOID_WALL_LEFT:
+            FIND_GOAL_AVOID_WALL_LEFT_logic();
+            break;
+
+        case FIND_GOAL_AVOID_WALL_RIGHT: 
+            FIND_GOAL_AVOID_WALL_RIGHT_logic();
             break;
         
         case DRIVE_TO_GOAL: 
@@ -302,28 +315,34 @@ void FSM::DETECTED_GOAL_logic()
 
 void FSM::FIND_GOAL_RIGHT_logic()
 {   
+
     // check if we're turning in the wrong direction
     if(density_ < previous_density_)
         current_state_ = FIND_GOAL_LEFT;
-    // check if we are at a new peak and we've seen this peak before
-    else if(density_ > previous_density_ && fabs(density_ - max_density_) < 1e-2)
+    else
+    {
         current_state_ = DRIVE_TO_GOAL;
+    }
 
     if (density_ > max_density_)
         max_density_ = density_;
-    
+
     previous_density_ = density_;
+    
 }
 
 
 void FSM::FIND_GOAL_LEFT_logic()
 {
+
+
     // check if we're turning in the wrong direction
     if(density_ < previous_density_)
         current_state_ = FIND_GOAL_RIGHT;
-    // check if we are at a new peak and we've seen this peak before
-    else if(density_ > previous_density_ && fabs(density_ - max_density_) < 1e-2)
+    else
+    {
         current_state_ = DRIVE_TO_GOAL;
+    }
 
     if (density_ > max_density_)
         max_density_ = density_;
@@ -331,22 +350,53 @@ void FSM::FIND_GOAL_LEFT_logic()
     previous_density_ = density_;
 }
 
+
+void FSM::FIND_GOAL_AVOID_WALL_LEFT_logic()
+{
+    if (fabs(prev_robot_pose_ - robot_pose_) >= Distance::ESCAPE_RANGE_90)
+        current_state_ = DRIVE_TO_GOAL;
+        return;
+}
+
+
+void FSM::FIND_GOAL_AVOID_WALL_RIGHT_logic()
+{
+    if (fabs(prev_robot_pose_ - robot_pose_) >= Distance::ESCAPE_RANGE_90)
+        current_state_ = DRIVE_TO_GOAL;
+        return;
+}
+
+
 void FSM::DRIVE_TO_GOAL_logic()
 {   
-    // check if we've headed in the wrong direction
-    if(density_ < previous_density_)
-    {
-        current_state_ = DETECTED_GOAL;
-    }
 
-    if(density_ > max_density_)
-        max_density_ = density_;
+    // check that we don't hit into anything
+    if (temp_scan_data_[LEFT] < Distance::CHECK_SIDE_DIST)
+    {
+        prev_robot_pose_ = robot_pose_;
+        prev_scan_data_ = temp_scan_data_;
+        current_state_ = FIND_GOAL_AVOID_WALL_RIGHT;
+        return;
+    }
+    else if (temp_scan_data_[RIGHT] < Distance::CHECK_SIDE_DIST)
+    {
+        prev_robot_pose_ = robot_pose_;
+        prev_scan_data_ = temp_scan_data_;
+        current_state_ = FIND_GOAL_AVOID_WALL_LEFT;
+        return;
+    }
     
+    // check if we've headed in the wrong direction
     // if we've reached our destination then stop
     if(density_ > GoalTracking::GOAL_FOUND)
     {
         current_state_ = STOP;
     }
+    else if(density_ < previous_density_)
+    {
+        current_state_ = DETECTED_GOAL;
+    }
+    
 
 }
 

@@ -72,11 +72,11 @@ def generate_launch_description():
     curr_maze_pos = maze_positions[maze_num]
 
     # Get the robot position
-    robot_positions = {"Enclosed-Maze": ["0.0", "0.0", "0.01"], "Floating":["0.0", "0.0", "0.01"]}
+    robot_positions = {"Enclosed-Maze": ["-0.76", "0.62", "0.0"], "Floating":["0.0", "0.0", "0.01"]}
     curr_robot_positions = robot_positions[maze_num]
 
     # Get the robot rotation
-    robot_rotation = {"Enclosed-Maze": "-1.5708", "Floating":"-3.141"}
+    robot_rotation = {"Enclosed-Maze": "1.14", "Floating":"-3.141"}
     rotation = robot_rotation[maze_num]
 
     # Launch configuration for robot spawn

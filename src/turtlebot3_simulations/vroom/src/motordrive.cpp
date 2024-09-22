@@ -36,12 +36,11 @@ void Motordrive::state_callback(const std_msgs::msg::Int32 msg){
             break;
 
         case ROTATE_IN_PLACE:
-            turn_right();
+            turn_right_fast();
             break;
 
         case TURN_TO_WALL:
-            // Slower than earlier so we can get more data
-            turn_right_slow();
+            turn_right();
             break;
 
         case TB3_DRIVE_FORWARD:
@@ -126,6 +125,11 @@ void Motordrive::turn_right(){
 void Motordrive::turn_right_slow()
 {
     update_cmd_vel(0.0, -1* 0.5 * MotorControl::ANGULAR_VELOCITY);
+}
+
+void Motordrive::turn_right_fast()
+{
+    update_cmd_vel(0.0, -1.5*MotorControl::ANGULAR_VELOCITY);
 }
 
 void Motordrive::turn_hard_left(){
