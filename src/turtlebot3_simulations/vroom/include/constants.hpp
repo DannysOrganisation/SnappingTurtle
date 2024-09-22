@@ -50,6 +50,7 @@ namespace Distance
     constexpr double ESCAPE_RANGE = 2 * DEG2RAD;
     constexpr double ESCAPE_RANGE_90 = 90 * DEG2RAD;
     constexpr double MAX_DISTANCE = 4.0;
+    constexpr double CHECK_ANGLE_WRAP = 180.0 * DEG2RAD;
 
 }
 

@@ -5,10 +5,11 @@ FSM CLASS IMPLEMENTATION
 */
 
 #include "fsm.hpp"
+#include <map>
 
 using namespace std::chrono_literals;
 
-FSM::FSM(): Node("fsm_node"), current_state_(LOCATE_WALL)
+FSM::FSM(): Node("fsm_node"), current_state_(TB3_DRIVE_FORWARD)
 {
     // set default values for everything
     scan_data_.resize(LidarAngles::NUM_ANGLES, 0.0);
@@ -93,6 +94,20 @@ void FSM::update_state()
     auto msg = std_msgs::msg::Int32();
     msg.data = current_state_;
 
+    std::map<int,std::string> m;
+    m.insert( std::pair<int, std::string>(LOCATE_WALL, "LOCATE_WALL") );
+    m.insert( std::pair<int, std::string>(ROTATE_IN_PLACE, "ROTATE_IN_PLACE") );
+    m.insert( std::pair<int, std::string>(TURN_TO_WALL, "TURN_TO_WALL") );
+    m.insert( std::pair<int, std::string>(GET_TB3_DIRECTION, "GET_TB3_DIRECTION") );
+    m.insert( std::pair<int, std::string>(TB3_DRIVE_FORWARD, "TB3_DRIVE_FORWARD") );
+    m.insert( std::pair<int, std::string>(TB3_RIGHT_TURN, "TB3_RIGHT_TURN") );
+    m.insert( std::pair<int, std::string>(TB3_RIGHT_TURN_90_DEG, "TB3_RIGHT_TURN_90_DEG") );
+    m.insert( std::pair<int, std::string>(TB3_LEFT_TURN, "TB3_LEFT_TURN") );
+    m.insert( std::pair<int, std::string>(TB3_LEFT_TURN_90_DEG, "TB3_LEFT_TURN_90_DEG") );
+    m.insert( std::pair<int, std::string>(TB3_SLOW_FORWARD, "TB3_SLOW_FORWARD") );
+
+    RCLCPP_INFO(this->get_logger(), ("Current State: " + m.at(current_state_)).c_str());
+
     // Publish the message
     state_pub_->publish(msg);
 
@@ -162,21 +177,49 @@ void FSM::update_state()
             break;
         
         case TB3_RIGHT_TURN:
+            RCLCPP_INFO(this->get_logger(), "Turning right. old_pose %f current pose %f", prev_robot_pose_, robot_pose_);
             
             // stay in rotate state until we get to a better position
             if (fabs(prev_robot_pose_ - robot_pose_) >= Distance::ESCAPE_RANGE)
+            {
                 current_state_ = GET_TB3_DIRECTION;
+                // RCLCPP_INFO(this->get_logger(), "Current difference %f", fabs(prev_robot_pose_ - robot_pose_));
+                // if (fabs(prev_robot_pose_ - robot_pose_) <= Distance::CHECK_ANGLE_WRAP) {
+                //     current_state_ = GET_TB3_DIRECTION;
+                // }
+                // else {
+                //     prev_robot_pose_ += 360 * DEG2RAD;
+                // }
+            }
             break;
         
         case TB3_LEFT_TURN:
+            RCLCPP_INFO(this->get_logger(), "Turning left. old_pose %f current pose %f", prev_robot_pose_, robot_pose_);
             // stay in rotate state until we get to a better position
             if (fabs(prev_robot_pose_ - robot_pose_) >= Distance::ESCAPE_RANGE)
+            {
                 current_state_ = GET_TB3_DIRECTION;
+                // if (fabs(prev_robot_pose_ - robot_pose_) >= Distance::CHECK_ANGLE_WRAP) {
+                //     prev_robot_pose_ -= 360 * DEG2RAD;
+                // }
+                // else {
+                //     current_state_ = GET_TB3_DIRECTION;
+                // }
+            }
             break;
         
         case TB3_LEFT_TURN_90_DEG:
-             if (fabs(prev_robot_pose_ - robot_pose_) >= Distance::ESCAPE_RANGE_90)
-                current_state_ = GET_TB3_DIRECTION;
+            RCLCPP_INFO(this->get_logger(), "Turning left. old_pose %f current pose %f", prev_robot_pose_, robot_pose_);
+            if (fabs(prev_robot_pose_ - robot_pose_) >= Distance::ESCAPE_RANGE_90)
+            {
+                // current_state_ = GET_TB3_DIRECTION;
+                if (fabs(prev_robot_pose_ - robot_pose_) >= Distance::CHECK_ANGLE_WRAP) {
+                    prev_robot_pose_ -= 360 * DEG2RAD;
+                }
+                else {
+                    current_state_ = GET_TB3_DIRECTION;
+                }
+            }
             break;
         
         case TB3_SLOW_FORWARD:
@@ -214,9 +257,9 @@ void FSM::GET_TB3_DIRECTION_logic()
         }
         // if the wall on the left is getting too further away, turn towards it
         else if (temp_scan_data_[LEFT] > prev_scan_data_[LEFT] && temp_scan_data_[LEFT] >  (1.3 * Distance::CHECK_SIDE_DIST) && (temp_scan_data_[LEFT] < 2* Distance::CHECK_SIDE_DIST)){
-        prev_robot_pose_ = robot_pose_;
-        prev_scan_data_ = temp_scan_data_;
-        current_state_ = TB3_LEFT_TURN;
+            prev_robot_pose_ = robot_pose_;
+            prev_scan_data_ = temp_scan_data_;
+            current_state_ = TB3_LEFT_TURN;
         }
         //if a left hand corner is approaching
         else if (temp_scan_data_[LEFT] > 1.5 * Distance::CHECK_SIDE_DIST && prev_scan_data_[LEFT] > 1.5 * Distance::CHECK_SIDE_DIST){
