@@ -1,11 +1,11 @@
 /*
-ODOMETRY NODE INTERFACE
+odom.hpp INTERFACE
 
-Should contain an interface for the odometry.
+This is the interface for the Odom node which reads from the
+turtlebot odometry and publishes the yaw of the robot as the pose
+to a given topic
 
-Odometry should subscribe to odom and then calculate the robots pose
-
-This should then store this in a member called robot_pose_
+Written: Daniel Monteiro
 
 */
 

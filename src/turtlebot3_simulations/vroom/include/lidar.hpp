@@ -1,3 +1,14 @@
+/*
+lidar.cpp INTERFACE
+
+This is the interface for the Lidar node which reads from the
+turtlebot lidar and publishes specific relevant scan angles required
+for driving.
+
+Written: Adam Riesel
+Edited: Daniel Monteiro
+*/
+
 #ifndef _LIDAR_HPP
 #define _LIDAR_HPP
 

@@ -1,11 +1,11 @@
 /*
+motordrive.hpp INTERFACE
 
-TODO 
+This is the interface for the motordrive node which reads from the
+state topic and publishes to cmd_vel to actually control the robot
 
-This should control the drive based on the current state.
-
-It should subscribe to the /state topic
-it should publish to the /cmd_vel topic
+Written: Adam Riesel
+Edited: Daniel Monteiro
 */
 
 #ifndef _MOTORDRIVE_HPP
