@@ -2,6 +2,8 @@
 This repository holds the code for MTRX3760 Project 1 and is created by the Master 
 Oogway group. It holds code that allows a turtlebot simulation to solve a maze.
 
+`https://discord.gg/9uQkYcss`
+
 ## Setting up the world
 Must have a launch file which calls the world to launch. The worlds
 are held in the `src/turtlebot3_simulations/turtlebot3_gazebo/worlds` folder.
