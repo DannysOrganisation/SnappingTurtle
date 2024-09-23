@@ -24,12 +24,15 @@ Odom::Odom() : Node("Odometry_Node")
         );
 
     //intialise publisher
-    odom_pub_ = this->create_publisher<std_msgs::msg::Float32>("robotpose", STANDARD_BUFFER_SIZE);
+    odom_pub_ = this->create_publisher<std_msgs::msg::Float32>("robotpose", 
+                                                        STANDARD_BUFFER_SIZE);
     // create the timer that will cotrol how often the state gets published
-    update_timer_ = this->create_wall_timer(20ms, std::bind(&Odom::update_pose, this));
+    update_timer_ = this->create_wall_timer(20ms, std::bind(&Odom::update_pose, 
+                                                            this));
 
     // display successful creation message
-    RCLCPP_INFO(this->get_logger(), "Odometry_Node has been successfully initialised");
+    RCLCPP_INFO(this->get_logger(), "Odometry_Node has been successfully 
+                                                            initialised");
 }
 
 Odom::~Odom()
@@ -50,7 +53,8 @@ void Odom::update_pose()
 The following function takes in the robots odometry and outputs stores the
 yaw direction of the robot in 'robot_pose' 
 
-@param msg: a nav_msgs::msg::Odometry::SharedPtr that corresponds to a quaternion (4 dimensional)
+@param msg: a nav_msgs::msg::Odometry::SharedPtr that corresponds to a 
+quaternion (4 dimensional)
 
 @return yaw: The current yaw angle in radians of the robot.
 */
@@ -78,7 +82,8 @@ void Odom::odom_callback(const nav_msgs::msg::Odometry::SharedPtr msg)
   //  logging statement to establish that this works
   // RCLCPP_INFO(this->get_logger(), "Pose: '%f'", yaw);
 
-  // set the member variable to the yaw (robot should only have rotation in this dimension)
+  // set the member variable to the yaw (robot should only have rotation in 
+  // this dimension)
   robot_pose_ = yaw;
 }
 

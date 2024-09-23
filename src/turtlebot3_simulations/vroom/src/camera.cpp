@@ -25,17 +25,21 @@ CameraReader::CameraReader() : Node("turtlebot3_camera_reader") {
     auto qos = rclcpp::QoS(rclcpp::KeepLast(10));
 
     // Create the publisher for the density of green in the image
-    state_pub_ = this->create_publisher<std_msgs::msg::Float32>("green_density", qos);
+    state_pub_ = this->create_publisher<std_msgs::msg::Float32>("green_density", 
+                                                                        qos);
 
     // Create the publisher for if the green is in the center of the image
-    center_green_density_pub_ = this->create_publisher<std_msgs::msg::Bool>("is_green_center", qos);
+    center_green_density_pub_ = this->create_publisher<std_msgs::msg::Bool>
+                                                    ("is_green_center", qos);
 
-    RCLCPP_INFO(this->get_logger(), "Turtlebot3 CameraReader node has been initialised.");
+    RCLCPP_INFO(this->get_logger(), "Turtlebot3 CameraReader node has been 
+                                                                initialised.");
 }
 
 // Destructor for the CameraReader class
 CameraReader::~CameraReader() {
-    RCLCPP_INFO(this->get_logger(), "Turtlebot3 CameraReader node has been destroyed.");
+    RCLCPP_INFO(this->get_logger(), "Turtlebot3 CameraReader node has been 
+                                                                destroyed.");
 }
 
 // Callback function for the camera topic
@@ -59,13 +63,15 @@ void CameraReader::camera_callback(const sensor_msgs::msg::Image::SharedPtr msg)
 
     // Initialised center green
     float amount_of_green_center = 0;
-    float amount_of_pixels_center = (end_index - starting_index) * valid_rows * AMOUNT_OF_COLOURS;
+    float amount_of_pixels_center = (end_index - starting_index) * valid_rows * 
+                                                            AMOUNT_OF_COLOURS;
 
     // iterate through each row
     for (int row = 0; row < height; row++){
         // and then each pixel in that row
         for (int column = 0; column < width; column++){
-            int actual_index = row * (width * AMOUNT_OF_COLOURS)  + column * AMOUNT_OF_COLOURS;
+            int actual_index = row * (width * AMOUNT_OF_COLOURS) + 
+                                column * AMOUNT_OF_COLOURS;
             uint8_t r = data[actual_index + RED_INDEX_ADJUSTMENT];       
             uint8_t g = data[actual_index + GREEN_INDEX_ADJUSTMENT];   
             uint8_t b = data[actual_index + BLUE_INDEX_ADJUSTMENT];
@@ -74,7 +80,8 @@ void CameraReader::camera_callback(const sensor_msgs::msg::Image::SharedPtr msg)
             amount_of_g += g;
             amount_of_b += b;
 
-            if (column >= starting_index && column <= starting_index && row < valid_rows) {
+            if (column >= starting_index && column <= starting_index && 
+                                            row < valid_rows) {
                 amount_of_green_center += g;
             }
         }
@@ -88,8 +95,10 @@ void CameraReader::camera_callback(const sensor_msgs::msg::Image::SharedPtr msg)
     last_b_density_ = 100.0f * amount_of_b / total_amount_of_pixels;
 
     // calculate center amount of green
-    float center_percent_of_green = 100.0f * amount_of_green_center / amount_of_pixels_center;
-    bool is_looking_at_goal = center_percent_of_green > ColorThresholds::GREEN_CENTER_THESHOLD;
+    float center_percent_of_green = 100.0f * amount_of_green_center / 
+                                            amount_of_pixels_center;
+    bool is_looking_at_goal = center_percent_of_green > 
+                                ColorThresholds::GREEN_CENTER_THESHOLD;
 
     // publish the density of the green
     std_msgs::msg::Float32 density_msg;

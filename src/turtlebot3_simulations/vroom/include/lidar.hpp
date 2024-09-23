@@ -51,11 +51,12 @@ class Lidar : public rclcpp::Node{
         std::vector<double> scan_data_;
         std::vector<double> prev_scan_data_;
 
-        uint16_t scan_angle[LidarAngles::NUM_ANGLES] = {LidarAngles::CENTER_ANGLE,
-                                                        LidarAngles::LEFT_ANGLE,
-                                                        LidarAngles::RIGHT_ANGLE,
-                                                        LidarAngles::HARD_LEFT_ANGLE,
-                                                        LidarAngles::HARD_RIGHT_ANGLE};
+        uint16_t scan_angle[LidarAngles::NUM_ANGLES] = 
+                                                {LidarAngles::CENTER_ANGLE,
+                                                LidarAngles::LEFT_ANGLE,
+                                                LidarAngles::RIGHT_ANGLE,
+                                                LidarAngles::HARD_LEFT_ANGLE,
+                                                LidarAngles::HARD_RIGHT_ANGLE};
 
 };
 #endif

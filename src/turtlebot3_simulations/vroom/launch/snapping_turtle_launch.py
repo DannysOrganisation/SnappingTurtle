@@ -5,7 +5,8 @@ def generate_launch_description():
 
     # Select wall side to follow
     dict_of_options = {"Left": "Left", "Right": "Right"}
-    wall_side = input(f"What side do you want to follow? (Options: {', '.join(list(dict_of_options.keys()))}): ")
+    wall_side = input(f"What side do you want to follow? (Options: \
+                      {', '.join(list(dict_of_options.keys()))}): ")
     if wall_side in list(dict_of_options.keys()):
         wall_choice = dict_of_options[wall_side]
     else:
