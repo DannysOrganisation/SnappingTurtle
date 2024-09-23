@@ -321,12 +321,12 @@ void FSM::GET_TB3_DIRECTION_logic()
     else if (left_wall_follow_ && temp_scan_data_[CENTER] < Distance::CHECK_FORWARD_DIST) {
         prev_scan_data_ = temp_scan_data_;
         prev_robot_pose_ = robot_pose_;
-        current_state_ = TB3_RIGHT_TURN_90_DEG;
+        current_state_ = TB3_RIGHT_TURN;
     }
     else if (!left_wall_follow_ && temp_scan_data_[CENTER] < Distance::CHECK_FORWARD_DIST) {
         prev_scan_data_ = temp_scan_data_;
         prev_robot_pose_ = robot_pose_;
-        current_state_ = TB3_RIGHT_TURN_90_DEG;
+        current_state_ = TB3_LEFT_TURN;
     }
 }
 
