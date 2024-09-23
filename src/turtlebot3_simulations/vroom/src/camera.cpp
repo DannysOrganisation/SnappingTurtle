@@ -11,12 +11,13 @@ By James Hocking
 
 #include "camera.hpp"
 
-
 // constructor for the CameraReader class
 CameraReader::CameraReader() : Node("turtlebot3_camera_reader") {
+
+
     // Subscribe to the camera topic
     camera_sub_ = this->create_subscription<sensor_msgs::msg::Image>(
-        "/camera/image_raw",  // Corrected topic name
+        "/camera/image_raw",
         rclcpp::SensorDataQoS(), 
         std::bind(&CameraReader::camera_callback, this, std::placeholders::_1)
     );
@@ -39,7 +40,8 @@ CameraReader::~CameraReader() {
 }
 
 // Callback function for the camera topic
-void CameraReader::camera_callback(const sensor_msgs::msg::Image::SharedPtr msg) {
+void CameraReader::camera_callback(const sensor_msgs::msg::Image::SharedPtr msg) 
+{
     // Access the raw image data
     const auto &data = msg->data;
 
@@ -63,18 +65,27 @@ void CameraReader::camera_callback(const sensor_msgs::msg::Image::SharedPtr msg)
 
     // iterate through each row
     for (int row = 0; row < height; row++){
+
         // and then each pixel in that row
-        for (int column = 0; column < width; column++){
-            int actual_index = row * (width * AMOUNT_OF_COLOURS)  + column * AMOUNT_OF_COLOURS;
+        for (int column = 0; column < width; column++)
+        {
+            int actual_index = row * (width * AMOUNT_OF_COLOURS)\
+            + column * AMOUNT_OF_COLOURS;
+
+            // extract RGB data each pixel
             uint8_t r = data[actual_index + RED_INDEX_ADJUSTMENT];       
             uint8_t g = data[actual_index + GREEN_INDEX_ADJUSTMENT];   
             uint8_t b = data[actual_index + BLUE_INDEX_ADJUSTMENT];
 
+            // sum together current pixel values
             amount_of_r += r;
             amount_of_g += g;
             amount_of_b += b;
 
-            if (column >= starting_index && column <= starting_index && row < valid_rows) {
+            // specifically determine if there is green in the middle
+            if (column >= starting_index && column <= starting_index && row <\
+            valid_rows)
+            {
                 amount_of_green_center += g;
             }
         }
@@ -118,7 +129,6 @@ float CameraReader::get_last_b_density() const {
     return last_b_density_;
 }
 
-
 // Main function to create the node
 int main(int argc, char ** argv)
 {
@@ -129,7 +139,6 @@ int main(int argc, char ** argv)
 
     // Spin the node to process callbacks
     rclcpp::spin(node);
-
     rclcpp::shutdown();
     return 0;
 }

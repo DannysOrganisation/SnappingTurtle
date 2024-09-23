@@ -1,3 +1,9 @@
+"""
+Launch file for the system wide turtlebot solving
+
+Written: Daniel Monteiro
+"""
+
 from launch import LaunchDescription
 from launch_ros.actions import Node
 
