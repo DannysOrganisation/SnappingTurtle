@@ -31,13 +31,10 @@ enum States {
     TB3_LEFT_TURN_90_DEG,
     TB3_SLOW_FORWARD,
 
-    // goal detection states
-    DETECTED_GOAL,
-    FIND_GOAL_RIGHT,
-    FIND_GOAL_LEFT,
-    FIND_GOAL_AVOID_WALL_LEFT,
-    FIND_GOAL_AVOID_WALL_RIGHT,
-    DRIVE_TO_GOAL,
+    // switching wall follow states
+    DRIVE_TO_NEXT_WALL,
+
+    // end states
     STOP,
     DANCE
 
@@ -50,10 +47,6 @@ enum CameraSettingsColors {
   AMOUNT_OF_COLOURS
 };
 
-enum WallFollowChoice {
-    LEFT_WALL = 0,
-    RIGHT_WALL
-};
 
 // Constants for LIDAR ANGLE DETECTIONS
 namespace LidarAngles {
@@ -96,7 +89,7 @@ namespace GoalTracking
 }
 
 namespace ColorThresholds {
-    constexpr double GREEN_CENTER_THESHOLD = 40;
+    constexpr double GREEN_CENTER_THESHOLD = 50;
 }
 
 #endif
