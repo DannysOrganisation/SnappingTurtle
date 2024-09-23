@@ -11,6 +11,10 @@ it should publish to the /cmd_vel topic
 #ifndef _MOTORDRIVE_HPP
 #define _MOTORDRIVE_HPP
 
+#include "constants.hpp"
+#include "std_msgs/msg/string.hpp"
+#include "std_msgs/msg/int32.hpp"
+
 #include <chrono>
 #include <functional>
 #include <memory>
@@ -20,16 +24,12 @@ it should publish to the /cmd_vel topic
 #include <rclcpp/rclcpp.hpp>
 #include <geometry_msgs/msg/twist.hpp>
 
-
-#include "constants.hpp"
-#include "std_msgs/msg/string.hpp"
-#include "std_msgs/msg/int32.hpp"
-
-
 class Motordrive : public rclcpp::Node{
     public:
+
         Motordrive();
         ~Motordrive();
+
     private:
         
         /**
@@ -79,37 +79,39 @@ class Motordrive : public rclcpp::Node{
          */
         void slow_forward();
 
-        /*
-        * #brief this function has the robot turn around slowly
-        */
+        /**
+        * @brief this function has the robot drive turn right at a slow speed
+         */
         void turn_right_slow();
 
-        /*
-        Turns right quickly
-        */
+        /**
+        * @brief this function has the robot drive turn right at a fast speed
+         */
         void turn_right_fast();
 
-        /*
-        * #brief this function has the robot turn around slowly
-        */
+        /**
+        * @brief this function has the robot drive turn left at a slow speed
+         */
         void turn_left_slow();
 
 
-        /*
-        Function stops the robot
-        */
+        /**
+        * @brief this function stops the robot
+         */
         void stop();
 
-        /*
-        Makes the robot dance after solving the maze
-        */
+        /**
+        * @brief this function makes the robot dance like RayGun
+         */
         void dance();
 
         //memory of the current state
         int current_state_;
 
-        //publish to cmd_vel and subscribe to state
+        //publish for cmd_vel
         rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_pub_;
+
+        // subscriber for the current state
         rclcpp::Subscription<std_msgs::msg::Int32>::SharedPtr motor_driver_sub_;
 };
 

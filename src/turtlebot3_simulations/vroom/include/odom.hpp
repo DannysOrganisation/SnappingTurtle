@@ -25,15 +25,22 @@ class Odom : public rclcpp::Node
         Odom();
         ~Odom();
 
-        // Getters
+        /**
+        * @brief this function gets the current yaw of the robot
+         */
         double get_robot_pose() const;
 
     private:
 
-        // Callback function for subscriber
+        /**
+        * @brief this function has the robot drive straight at a slow speed
+        * 
+        * @param msg is the message received via the topic which odom_sub_
+         * is subscribed to
+         */
         void odom_callback(const nav_msgs::msg::Odometry::SharedPtr msg);
 
-        // Odometry Publisher
+        // Robot Pose Publisher
         rclcpp::Publisher<std_msgs::msg::Float32>::SharedPtr odom_pub_; 
         rclcpp::TimerBase::SharedPtr update_timer_;
         void update_pose();
@@ -42,9 +49,14 @@ class Odom : public rclcpp::Node
         rclcpp::Publisher<nav_msgs::msg::Path>::SharedPtr path_pub_; 
 
         // Member variables
+  
+        // Odometry subscriber
         rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub_;
+
+        // member variable to store the current yaw
         double robot_pose_;
-        double prev_robot_pose_;
+        
+        // member variable to store the path for later viewing
         nav_msgs::msg::Path path_;
 
 };

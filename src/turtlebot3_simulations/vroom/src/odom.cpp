@@ -1,7 +1,12 @@
 /*
-Odometry node IMPLEMENTATION
-*/
+odom.cpp IMPLEMENTATION
 
+This is the implementation for the Odom node which reads from the
+turtlebot odometry and publishes the yaw of the robot as the pose
+to a given topic
+
+Written: Daniel Monteiro
+*/
 #include "odom.hpp"
 
 using namespace std::chrono_literals;
@@ -40,7 +45,6 @@ Odom::~Odom()
   RCLCPP_INFO(this->get_logger(), "Odometry_Node has been terminated");
 }
 
-
 void Odom::update_pose()
 {
   auto msg = std_msgs::msg::Float32();
@@ -51,7 +55,6 @@ void Odom::update_pose()
 
 
 }
-
 
 /*
 The following function takes in the robots odometry and outputs stores the
@@ -98,7 +101,6 @@ void Odom::odom_callback(const nav_msgs::msg::Odometry::SharedPtr msg)
   path_pub_->publish(path_);
 }
 
-
 /*
 Getter for the robot pose. 
 Const used such that the getter can't change the robot
@@ -111,11 +113,10 @@ double Odom::get_robot_pose() const
     return robot_pose_;
 }
 
-#ifdef ODOM_MAIN
+// Main function to spawn the odometry node
 int main(int argc, char** argv)
 {
   rclcpp::init(argc, argv);
   rclcpp::spin(std::make_shared<Odom>());
    rclcpp::shutdown();
 }
-#endif
