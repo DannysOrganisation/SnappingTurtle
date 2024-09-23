@@ -89,7 +89,7 @@ namespace GoalTracking
 }
 
 namespace ColorThresholds {
-    constexpr double GREEN_CENTER_THESHOLD = 40;
+    constexpr double GREEN_CENTER_THESHOLD = 50;
 }
 
 #endif
