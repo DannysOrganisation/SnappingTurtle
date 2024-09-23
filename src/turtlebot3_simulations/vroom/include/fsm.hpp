@@ -27,6 +27,10 @@ class FSM : public rclcpp::Node
         FSM();
         ~FSM();
     private:
+
+        // decide if we left wall follow or right wall follow
+        bool left_wall_follow_;
+
         // ROS topic publishers
         rclcpp::Publisher<std_msgs::msg::Int32>::SharedPtr state_pub_;
 
@@ -79,9 +83,6 @@ class FSM : public rclcpp::Node
         double start_pose_;
         double min_distance_pose_;
         double min_distance_;
-        
-        // choice of wall to follow (left or right wall)
-        WallFollowChoice wall_choice_;
 
         // track poses that need to be remembered
         double robot_pose_;
@@ -101,7 +102,7 @@ class FSM : public rclcpp::Node
         rclcpp::Clock ros_clk;
         rclcpp::Time current_time;
 
-        //TODO
+        // timer flag for finding wall
         bool locate_flag_;
     
         /**

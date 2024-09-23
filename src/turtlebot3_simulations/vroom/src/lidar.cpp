@@ -1,3 +1,14 @@
+/*
+lidar.cpp IMPLEMENTATION
+
+This is the implementation for the Lidar node which reads from the
+turtlebot lidar and publishes specific relevant scan angles required
+for driving.
+
+Written: Adam Riesel
+Edited: Daniel Monteiro
+*/
+
 #include "lidar.hpp"
 
 using namespace std::chrono_literals;
@@ -63,15 +74,7 @@ void Lidar::update_scan_data()
 }
 
 
-std::vector<double> Lidar::get_scan_data()
-{   
-    // create a deep copy as to not change the original data (getter)
-    std::vector<double> deep_copy_scan_data = scan_data_;
-    return deep_copy_scan_data;
-}
 
-
-#ifdef LIDAR_MAIN
 
 int main(int argc, char** argv)
 {
@@ -79,4 +82,3 @@ int main(int argc, char** argv)
     rclcpp::spin(std::make_shared<Lidar>());
     rclcpp::shutdown();
 }
-#endif

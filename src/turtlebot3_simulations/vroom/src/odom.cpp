@@ -1,7 +1,12 @@
 /*
-Odometry node IMPLEMENTATION
-*/
+odom.cpp IMPLEMENTATION
 
+This is the implementation for the Odom node which reads from the
+turtlebot odometry and publishes the yaw of the robot as the pose
+to a given topic
+
+Written: Daniel Monteiro
+*/
 #include "odom.hpp"
 
 using namespace std::chrono_literals;
@@ -11,7 +16,6 @@ Odom::Odom() : Node("Odometry_Node")
 
     // initialise the current pose
     robot_pose_ = 0.0;
-    prev_robot_pose_ = 0.0;
 
     // Initialise subscriber
     odom_sub_ = this->create_subscription<nav_msgs::msg::Odometry>(
@@ -25,6 +29,9 @@ Odom::Odom() : Node("Odometry_Node")
 
     //intialise publisher
     odom_pub_ = this->create_publisher<std_msgs::msg::Float32>("robotpose", STANDARD_BUFFER_SIZE);
+    path_pub_ = this->create_publisher<nav_msgs::msg::Path>("turtlebot_path", STANDARD_BUFFER_SIZE);
+
+
     // create the timer that will cotrol how often the state gets published
     update_timer_ = this->create_wall_timer(20ms, std::bind(&Odom::update_pose, this));
 
@@ -60,19 +67,11 @@ Odom::~Odom()
   RCLCPP_INFO(this->get_logger(), "Odometry_Node has been terminated");
 }
 
-
 void Odom::update_pose()
 {
   auto msg = std_msgs::msg::Float32();
   msg.data = robot_pose_;
   odom_pub_->publish(msg);
-}
-
-
-void Odom::update_marker()
-{
-  auto msg = visualization_msgs::msg::Marker();
-  marker_pub_->publish(marker);
 }
 
 /*
@@ -85,10 +84,6 @@ yaw direction of the robot in 'robot_pose'
 */
 void Odom::odom_callback(const nav_msgs::msg::Odometry::SharedPtr msg)
 {
-
-  // save the previous result
-  prev_robot_pose_ = robot_pose_;
-
   // break the message down into a quaternion
   tf2::Quaternion q(
     msg->pose.pose.orientation.x,
@@ -110,19 +105,16 @@ void Odom::odom_callback(const nav_msgs::msg::Odometry::SharedPtr msg)
   // set the member variable to the yaw (robot should only have rotation in this dimension)
   robot_pose_ = yaw;
 
-  //set robot_position_
-  marker.pose.position.x = msg->pose.pose.position.x;
-  marker.pose.position.y = msg->pose.pose.position.y;
-  marker.pose.position.z = msg->pose.pose.position.z;
-  marker.pose.orientation.x = 0.0;
-  marker.pose.orientation.y = 0.0;
-  marker.pose.orientation.z = 0.0;
-  marker.pose.orientation.w = 1;
-  marker.header.stamp = this->get_clock().get()->now();
-  marker.id = marker.id + 1;
-  rclcpp::sleep_for(50ns);
+  // Extract pose information
+  geometry_msgs::msg::PoseStamped pose_stamped;
+  pose_stamped.header = msg->header;
+  pose_stamped.pose = msg->pose.pose;
+  
+  // publish pose information
+  path_.header = msg->header;
+  path_.poses.push_back(pose_stamped);
+  path_pub_->publish(path_);
 }
-
 
 /*
 Getter for the robot pose. 
@@ -136,11 +128,10 @@ double Odom::get_robot_pose() const
     return robot_pose_;
 }
 
-#ifdef ODOM_MAIN
+// Main function to spawn the odometry node
 int main(int argc, char** argv)
 {
   rclcpp::init(argc, argv);
   rclcpp::spin(std::make_shared<Odom>());
    rclcpp::shutdown();
 }
-#endif

@@ -31,15 +31,9 @@ enum States {
     TB3_LEFT_TURN_90_DEG,
     TB3_SLOW_FORWARD,
 
-    // goal detection states
-    DETECTED_GOAL,
-    FIND_GOAL_RIGHT,
-    FIND_GOAL_LEFT,
-    FIND_GOAL_AVOID_WALL_LEFT,
-    FIND_GOAL_AVOID_WALL_RIGHT,
-    DRIVE_TO_GOAL,
+    // end states
     STOP,
-    DANCE
+    DANCE   // no longer being used :(
 
 };
 
@@ -50,10 +44,6 @@ enum CameraSettingsColors {
   AMOUNT_OF_COLOURS
 };
 
-enum WallFollowChoice {
-    LEFT_WALL = 0,
-    RIGHT_WALL
-};
 
 // Constants for LIDAR ANGLE DETECTIONS
 namespace LidarAngles {
@@ -84,6 +74,8 @@ namespace Distance
 
 namespace MotorControl
 {
+    constexpr double SLOW_SCALING = 0.5;
+    constexpr double SPEED_SCALING = 1.5;
     constexpr double LINEAR_VELOCITY = 0.3;
     constexpr double ANGULAR_VELOCITY = 0.2;
     constexpr double TIME_FOR_HALF_ROTATION = (M_PI/ANGULAR_VELOCITY);
@@ -96,7 +88,7 @@ namespace GoalTracking
 }
 
 namespace ColorThresholds {
-    constexpr double GREEN_CENTER_THESHOLD = 40;
+    constexpr double GREEN_CENTER_THESHOLD = 50;
 }
 
 #endif

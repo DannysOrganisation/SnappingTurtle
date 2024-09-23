@@ -1,5 +1,14 @@
-#include "motordrive.hpp"
+/*
+motordrive.cpp IMPLEMENTATION
 
+This is the implementation for the motordrive node which reads from the
+state topic and publishes to cmd_vel to actually control the robot
+
+Written: Adam Riesel
+Edited: Daniel Monteiro
+*/
+
+#include "motordrive.hpp"
 
 Motordrive::Motordrive()
     : Node ("tb3_motor_drive")
@@ -23,6 +32,8 @@ Motordrive::~Motordrive()
     RCLCPP_INFO(this->get_logger(), "Motor_drive node has been terminated");
 }
 
+
+// Callback Function for motordriver subscriber
 void Motordrive::state_callback(const std_msgs::msg::Int32 msg){
     
     //store current state
@@ -67,39 +78,21 @@ void Motordrive::state_callback(const std_msgs::msg::Int32 msg){
             turn_hard_right();
             break;
 
-        case DETECTED_GOAL:
-            stop();
-            break;
-        
-        case FIND_GOAL_RIGHT:
-            turn_right_slow();
-            break;
-        
-        case FIND_GOAL_LEFT:
-            turn_left_slow();
-            break;
-        
-        case DRIVE_TO_GOAL:
-            drive_forward();
-            break;
-
         case STOP:
             stop();
             break;
 
-
-        //added default state to drive forward... probably not the best option
-        //I think a better option would be to come to a stop? not sure tbh
+        // Drive Forward as the default state
         default:
-            stop();
+            drive_forward();
             break;
 
     }
 }
 
+// Publisher callback for the cmd_vel
 void Motordrive::update_cmd_vel(double linear, double angular)
 {
-
     //convert velocities into ros2 format for cmd_vel
     geometry_msgs::msg::Twist cmd_vel;
     cmd_vel.linear.x = linear;
@@ -109,14 +102,13 @@ void Motordrive::update_cmd_vel(double linear, double angular)
     cmd_vel_pub_->publish(cmd_vel);
 }
 
-//update cmd_vel appropriately for each method
 void Motordrive::turn_left(){
     update_cmd_vel(0.0, MotorControl::ANGULAR_VELOCITY);
 }
 
 void Motordrive::turn_left_slow()
 {
-    update_cmd_vel(0.0, 0.5 * MotorControl::ANGULAR_VELOCITY);
+    update_cmd_vel(0.0, MotorControl::SLOW_SCALING * MotorControl::ANGULAR_VELOCITY);
 }
 
 void Motordrive::turn_right(){
@@ -125,16 +117,19 @@ void Motordrive::turn_right(){
 
 void Motordrive::turn_right_slow()
 {
-    update_cmd_vel(0.0, -1* 0.5 * MotorControl::ANGULAR_VELOCITY);
+    update_cmd_vel(0.0, -1* MotorControl::SLOW_SCALING * MotorControl::ANGULAR_VELOCITY);
 }
 
 void Motordrive::turn_right_fast()
 {
-    update_cmd_vel(0.0, -1.5*MotorControl::ANGULAR_VELOCITY);
+    update_cmd_vel(0.0, -1 * MotorControl::SPEED_SCALING * MotorControl::ANGULAR_VELOCITY);
 }
 
-void Motordrive::turn_hard_left(){
-    update_cmd_vel(0.1*MotorControl::LINEAR_VELOCITY, MotorControl::ANGULAR_VELOCITY);
+void Motordrive::turn_hard_left()
+{
+    update_cmd_vel(MotorControl::SLOW_SCALING * 
+                   MotorControl::SLOW_SCALING *
+                   MotorControl::LINEAR_VELOCITY, MotorControl::ANGULAR_VELOCITY);
 }
 
 void Motordrive::turn_hard_right(){
@@ -152,13 +147,15 @@ void Motordrive::stop()
 
 void Motordrive::dance()
 {
-    update_cmd_vel(0.0, 100*MotorControl::ANGULAR_VELOCITY);
+    update_cmd_vel(0.0, MotorControl::SPEED_SCALING *
+    MotorControl::ANGULAR_VELOCITY);
 }
 
 void Motordrive::slow_forward(){
-    update_cmd_vel(0.5 * MotorControl::LINEAR_VELOCITY, 0.0);
+    update_cmd_vel(MotorControl::SLOW_SCALING * MotorControl::LINEAR_VELOCITY, 0.0);
 }
 
+// Main function to spawn the node
 int main(int argc, char ** argv)
 {
   rclcpp::init(argc, argv);
