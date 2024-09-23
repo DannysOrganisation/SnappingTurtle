@@ -25,6 +25,9 @@ Odom::Odom() : Node("Odometry_Node")
 
     //intialise publisher
     odom_pub_ = this->create_publisher<std_msgs::msg::Float32>("robotpose", STANDARD_BUFFER_SIZE);
+    path_pub_ = this->create_publisher<nav_msgs::msg::Path>("turtlebot_path", STANDARD_BUFFER_SIZE);
+
+
     // create the timer that will cotrol how often the state gets published
     update_timer_ = this->create_wall_timer(20ms, std::bind(&Odom::update_pose, this));
 
@@ -43,6 +46,10 @@ void Odom::update_pose()
   auto msg = std_msgs::msg::Float32();
   msg.data = robot_pose_;
   odom_pub_->publish(msg);
+
+
+
+
 }
 
 
@@ -80,6 +87,15 @@ void Odom::odom_callback(const nav_msgs::msg::Odometry::SharedPtr msg)
 
   // set the member variable to the yaw (robot should only have rotation in this dimension)
   robot_pose_ = yaw;
+
+
+  geometry_msgs::msg::PoseStamped pose_stamped;
+  pose_stamped.header = msg->header;
+  pose_stamped.pose = msg->pose.pose;
+
+  path_.header = msg->header;
+  path_.poses.push_back(pose_stamped);
+  path_pub_->publish(path_);
 }
 
 

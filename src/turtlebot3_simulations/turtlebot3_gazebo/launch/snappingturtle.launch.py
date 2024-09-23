@@ -68,13 +68,15 @@ def generate_launch_description():
     )
 
     # Get the maze position
-    maze_positions = {"Enclosed-Maze": ["0", "1.9", "0.0"], "Floating":["3.9", "1.5", "0.0"]} # ["4", "1", "0.0"]
+    maze_positions = {"Enclosed-Maze": ["0", "2.4", "0.0"], "Floating":["0", "1.8", "0.0"]} # ["4", "1", "0.0"]
     curr_maze_pos = maze_positions[maze_num]
 
-    floating_back_position = ["4.5", "-0.5", "0.01"]
-    floating_easy_position= ["0.2", "1.8", "0.01"]
     # Get the robot position
-    robot_positions = {"Enclosed-Maze": ["-0.76", "0.62", "0.0"], "Floating":floating_back_position}
+<<<<<<< Updated upstream
+    robot_positions = {"Enclosed-Maze": ["0", "0", "0.01"], "Floating":floating_back_position}
+=======
+    robot_positions = {"Enclosed-Maze": ["-0.76", "0.62", "0.0"], "Floating":["0.00", "0.00", "0.01"]}
+>>>>>>> Stashed changes
     curr_robot_positions = robot_positions[maze_num]
 
     # Get the robot rotation
