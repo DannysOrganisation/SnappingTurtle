@@ -278,7 +278,9 @@ void FSM::GET_TB3_DIRECTION_logic()
                 prev_robot_pose_ = robot_pose_;
                 prev_scan_data_ = temp_scan_data_;
                 current_state_ = TB3_RIGHT_TURN_90_DEG;
-                left_wall_follow_ = false;
+                // left_wall_follow_ = false;
+                RCLCPP_INFO(this->get_logger(), "Changing Islands");
+
             }
         }
         else if(!left_wall_follow_)
@@ -302,7 +304,9 @@ void FSM::GET_TB3_DIRECTION_logic()
                 prev_robot_pose_ = robot_pose_;
                 prev_scan_data_ = temp_scan_data_;
                 current_state_ = TB3_LEFT_TURN_90_DEG;
-                left_wall_follow_ = false;
+                left_wall_follow_ = true;
+                RCLCPP_INFO(this->get_logger(), "Changing to left wall follow");
+
             }
         }
         
