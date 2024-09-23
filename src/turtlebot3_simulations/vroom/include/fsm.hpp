@@ -80,14 +80,4 @@ class FSM : public rclcpp::Node
         void GET_TB3_DIRECTION_logic();
         void ROTATE_IN_PLACE_logic();
         void LOCATE_WALL_logic();
-
-        // goal state transition_logic
-        void DETECTED_GOAL_logic();
-
-        void FIND_GOAL_RIGHT_logic();
-        void FIND_GOAL_LEFT_logic();
-
-        void FIND_GOAL_AVOID_WALL_LEFT_logic();
-        void FIND_GOAL_AVOID_WALL_RIGHT_logic();
-        void DRIVE_TO_GOAL_logic();
 };
