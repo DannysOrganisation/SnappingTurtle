@@ -16,7 +16,6 @@ Odom::Odom() : Node("Odometry_Node")
 
     // initialise the current pose
     robot_pose_ = 0.0;
-    prev_robot_pose_ = 0.0;
 
     // Initialise subscriber
     odom_sub_ = this->create_subscription<nav_msgs::msg::Odometry>(
@@ -66,10 +65,6 @@ yaw direction of the robot in 'robot_pose'
 */
 void Odom::odom_callback(const nav_msgs::msg::Odometry::SharedPtr msg)
 {
-
-  // save the previous result
-  prev_robot_pose_ = robot_pose_;
-
   // break the message down into a quaternion
   tf2::Quaternion q(
     msg->pose.pose.orientation.x,

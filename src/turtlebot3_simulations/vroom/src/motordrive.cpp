@@ -108,7 +108,7 @@ void Motordrive::turn_left(){
 
 void Motordrive::turn_left_slow()
 {
-    update_cmd_vel(0.0, MotorControl::SLOW_SCALING *\ MotorControl::ANGULAR_VELOCITY);
+    update_cmd_vel(0.0, MotorControl::SLOW_SCALING * MotorControl::ANGULAR_VELOCITY);
 }
 
 void Motordrive::turn_right(){
@@ -117,19 +117,19 @@ void Motordrive::turn_right(){
 
 void Motordrive::turn_right_slow()
 {
-    update_cmd_vel(0.0, -1* MotorControl::SLOW_SCALING *\ MotorControl::ANGULAR_VELOCITY);
+    update_cmd_vel(0.0, -1* MotorControl::SLOW_SCALING * MotorControl::ANGULAR_VELOCITY);
 }
 
 void Motordrive::turn_right_fast()
 {
-    update_cmd_vel(0.0, -1 * MotorControl::SPEED_SCALING *\ MotorControl::ANGULAR_VELOCITY);
+    update_cmd_vel(0.0, -1 * MotorControl::SPEED_SCALING * MotorControl::ANGULAR_VELOCITY);
 }
 
 void Motordrive::turn_hard_left()
 {
-    update_cmd_vel(MotorControl::SLOW_SCALING * \
-                   MotorControl::SLOW_SCALING *\
-                   MotorControl::LINEAR_VELOCITY,\ MotorControl::ANGULAR_VELOCITY);
+    update_cmd_vel(MotorControl::SLOW_SCALING * 
+                   MotorControl::SLOW_SCALING *
+                   MotorControl::LINEAR_VELOCITY, MotorControl::ANGULAR_VELOCITY);
 }
 
 void Motordrive::turn_hard_right(){
@@ -147,12 +147,12 @@ void Motordrive::stop()
 
 void Motordrive::dance()
 {
-    update_cmd_vel(0.0, MotorControl::SPEED_SCALING *\
+    update_cmd_vel(0.0, MotorControl::SPEED_SCALING *
     MotorControl::ANGULAR_VELOCITY);
 }
 
 void Motordrive::slow_forward(){
-    update_cmd_vel(MotorControl::SLOW_SCALING *\ * MotorControl::LINEAR_VELOCITY, 0.0);
+    update_cmd_vel(MotorControl::SLOW_SCALING * MotorControl::LINEAR_VELOCITY, 0.0);
 }
 
 // Main function to spawn the node
