@@ -15,6 +15,8 @@ This should then store this in a member called robot_pose_
 #include <tf2/LinearMath/Quaternion.h>
 #include <rclcpp/rclcpp.hpp>
 #include "std_msgs/msg/float32.hpp"
+#include <geometry_msgs/msg/pose_stamped.hpp>
+#include <nav_msgs/msg/path.hpp>
 
 
 class Odom : public rclcpp::Node
@@ -43,10 +45,18 @@ class Odom : public rclcpp::Node
         rclcpp::TimerBase::SharedPtr update_timer_;
         void update_pose();
 
+        // Path Publisher
+        rclcpp::Publisher<nav_msgs::msg::Path>::SharedPtr path_pub_; 
+
+        // Member variables
+  
         // Odometry subscriber
         rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub_;
 
         // member variable to store the current yaw
         double robot_pose_;
+        
+        // member variable to store the path for later viewing
+        nav_msgs::msg::Path path_;
 
 };
